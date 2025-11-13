@@ -1,0 +1,19 @@
+Alles was http3 verwendet verwendet QUIC:
+Couldflare unterstützt seit 2021 http3 -> https://www.cloudflare.com/de-de/learning/performance/what-is-http3/ 13.11.
+amazon aws http3 -> https://aws.amazon.com/blogs/aws/new-http-3-support-for-amazon-cloudfront/ 13.11
+azure ddos quic support -> https://techcommunity.microsoft.com/blog/azurenetworksecurityblog/azure-ddos-protection-now-supports-quic-protocol-%E2%80%94-securing-the-future-of-http3-/4456522 13.11
+
+
+Coding Frameworks:
+    C#      ASP.NET Core http3 -> https://learn.microsoft.com/de-de/aspnet/core/fundamentals/servers/kestrel/http3?view=aspnetcore-9.0 13.11
+    C#      System.Net.Quic -> https://learn.microsoft.com/de-de/dotnet/fundamentals/networking/quic/quic-overview 13.11
+    Python  aioquic -> https://github.com/aiortc/aioquic 13.11
+    Java    HttpClient -> https://inside.java/2025/10/22/http3-support/ 13.11
+    Java    kwik -> https://github.com/ptrd/kwik 13.11
+    rust    quiche -> https://github.com/cloudflare/quiche 13.11
+    rust    gm-quic -> https://github.com/genmeta/gm-quic 13.11
+    c       msquic -> https://github.com/microsoft/msquic 13.11
+    c       lsquic -> https://github.com/litespeedtech/lsquic 13.11
+
+
+
