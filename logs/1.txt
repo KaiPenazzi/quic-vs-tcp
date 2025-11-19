@@ -22,6 +22,11 @@ Nachteile:
     - Debugging schwieriger, da auch Kontrollinformationen verschlüsselt sind
     - Netzwerkgeräte (Router/Firewalls) können weniger optimieren, da sie den Inhalt nicht einsehen können
 
+Unternehmen die QUIC einsetzen:
+    - Couldflare unterstützt seit 2021 http3 -> https://www.cloudflare.com/de-de/learning/performance/what-is-http3/ 13.11.
+    - Amazon aws http3 -> https://aws.amazon.com/blogs/aws/new-http-3-support-for-amazon-cloudfront/ 13.11
+    - Azure ddos quic support -> https://techcommunity.microsoft.com/blog/azurenetworksecurityblog/azure-ddos-protection-now-supports-quic-protocol-%E2%80%94-securing-the-future-of-http3-/4456522 13.11
+
 Frameworks:
     - C#      ASP.NET Core http3 -> https://learn.microsoft.com/de-de/aspnet/core/fundamentals/servers/kestrel/http3?view=aspnetcore-9.0 13.11
     - C#      System.Net.Quic -> https://learn.microsoft.com/de-de/dotnet/fundamentals/networking/quic/quic-overview 13.11
