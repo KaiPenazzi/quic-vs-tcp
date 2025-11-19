@@ -1,0 +1,102 @@
+Im Rahmen der letzten zwei Wochen habe ich mich mit folgenden Themen beschäftigt:
+    - Funktionsweise des QUIC-Protokolls
+    - Recherche, welche Unternehmen derzeit bereits QUIC/HTTP3 einsetzen
+    - Recherche zu verfügbaren Frameworks und Bibliotheken in verschiedenen Programmiersprachen
+    - Auswahl geeigneter Tools für Messungen und Analyse (tc, Wireshark)
+    - Erste Server- und Client-Implementationen in Rust (gm-quic), inkl. Versenden einer Testnachricht
+
+Funktionsweise des QUIC-Protokolls:
+    - QUIC ist ein Transportprotokoll auf Schicht 4 und verwendet UDP als Träger
+    - QUIC ersetzt funktional TCP + TLS und integriert zusätzliche Features wie 0-RTT
+    - QUIC baut eine verschlüsselte Verbindung über einen 1-RTT-Handshake auf; bei Wiederverbindungen sogar 0-RTT.
+      Dadurch benötigt QUIC weniger Round-Trips als TCP + TLS in Kombination.
+
+Vorteile:
+    - 0-RTT und 1-RTT Handshake, dadurch geringere Latenz
+    - Geringere Verzögerung, da Transport und Verschlüsselung in einem Protokoll vereint sind
+    - Multiplexing ohne Head-of-Line-Blocking
+    - Verbindung bleibt stabil bei Netzwerkwechseln (Connection IDs statt IP/Port-Bindung)
+
+Nachteile:
+    - Höherer CPU-Verbrauch, da Verschlüsselung, Paketverwaltung und Verlustkorrektur nicht durch die Netzwerkkarte erfolgen
+    - Debugging schwieriger, da auch Kontrollinformationen verschlüsselt sind
+    - Netzwerkgeräte (Router/Firewalls) können weniger optimieren, da sie den Inhalt nicht einsehen können
+
+Frameworks:
+    - C#      ASP.NET Core http3 -> https://learn.microsoft.com/de-de/aspnet/core/fundamentals/servers/kestrel/http3?view=aspnetcore-9.0 13.11
+    - C#      System.Net.Quic -> https://learn.microsoft.com/de-de/dotnet/fundamentals/networking/quic/quic-overview 13.11
+    - Python  aioquic -> https://github.com/aiortc/aioquic 13.11
+    - Java    HttpClient -> https://inside.java/2025/10/22/http3-support/ 13.11
+    - Java    kwik -> https://github.com/ptrd/kwik 13.11
+    - rust    quiche -> https://github.com/cloudflare/quiche 13.11
+    - rust    gm-quic -> https://github.com/genmeta/gm-quic 13.11
+    - c       msquic -> https://github.com/microsoft/msquic 13.11
+    - c       lsquic -> https://github.com/litespeedtech/lsquic 13.11
+
+
+Geeigneter Tools für Messungen und Tracking (tc, Wireshark)
+    ChatGPT Frage: kannst du mir geeignete tools zum vergleichen eine quic und tcp Verbindung empfehlen, ich habe selber einen client und server gebaut. 14.11
+    Ergebnis:
+        Gute Frage! Es gibt mehrere Tools, mit denen du deine selbstgebauten QUIC- und TCP-Verbindungen vergleichen kannst – je nachdem, was genau du messen willst (Latenz, Durchsatz, Paketverlust, Verbindungseinrichtung, etc.). Hier sind ein paar Empfehlungen + wie du sie einsetzen kannst:
+
+        🔧 Tools für den Vergleich TCP vs QUIC
+
+        qperf
+        - Speziell für QUIC gedacht, ähnlich wie iperf für TCP.
+        - Misst Durchsatz, Verbindungsaufbauzeit, Verlust.
+        - Voraussetzung: TLS-Zertifikat, da QUIC TLS braucht.
+        - Sehr nützlich, wenn du explizit QUIC-Messwerte hast und diese mit TCP vergleichen willst.
+
+        QUIC / TCP Measurement Tool (qtm)
+        - Ein kleines Go-Tool („qtm“) aus dem Projekt bennyboer/quic-tcp-performance.
+        - Unterstützt sowohl QUIC als auch TCP, wodurch du direkt compare kannst, indem du denselben Client/Server mit beiden Protokollen betreibst.
+        - Flexibel: du kannst definieren, ob du eine bestimmte Menge Bytes senden willst (--bytes) oder über eine bestimmte Zeit (--duration) mit Puffergrößen.
+
+        qlog / qvis
+        - qlog ist ein Standard-/Schema zum Loggen von QUIC-Verbindungsereignissen (z. B. Paket gesendet, verloren, Wiederholung, Congestion Window, RTT).
+        - Viele QUIC-Implementierungen unterstützen qlog (z. B. quic-go).
+        - Mit qvis kannst du diese Logs visuell aufbereiten: Sequenzdiagramme, Zeitachsen, Retransmits etc. Sehr hilfreich, um das Verhalten von QUIC intern zu verstehen.
+        - Wenn du OpenSSL mit QUIC benutzt, kannst du openssl-qlog verwenden, um qlog-Dateien zu erzeugen.
+
+        Netzwerk-Sniffer / Paketanalysatoren
+        - netsniff-ng: Ein sehr leistungsfähiges Toolkit für das Capturen und Analysieren von Netzwerkpaketen auf Linux.
+        - Zusammen mit tcpdump oder Wireshark kannst du QUIC-Pakete (UDP + QUIC-Struktur) vs. TCP-Pakete analysieren – z. B. um Round-Trip-Zeiten, Retransmits, Paketgrößen zu vergleichen.
+
+        TCP-Benchmarking Tools
+        Auch wenn du vor allem QUIC messen willst, brauchst du gutes TCP-Referenz-Benchmarking:
+
+        - iperf / iperf3: Sehr verbreitet, einfach zu nutzen, misst Durchsatz (TCP & UDP) sehr zuverlässig.
+        - Flowgrind: Etwas fortgeschrittener, kann Transport-Layer-Metriken wie RTT, Congestion Window ausgeben.
+        - tcptrace: Analyse von TCP-Verbindungen aus pcap-Dateien, zeigt u.a. Retransmits, Fenstergröße, Durchsatz über die Zeit.
+
+        Benchmark-Frameworks
+        - TQUIC: In deren Benchmark-Dokumentation gibt es Methoden, um QUIC-Implementationen zu testen unter verschiedenem Netzwerkbedingungen.
+        - MsQuic Performance Dashboard: Wenn du Microsofts QUIC-Implementierung nutzt, kannst du ihre Performance-Tests + Metriken über ihr Dashboard einsehen.
+
+        ✅ Empfehlung für deinen Use-Case
+
+        Da du sagst, dass du einen eigenen Client und Server gebaut hast, würde ich dir folgenden Workflow vorschlagen:
+
+        1. Messung des Durchsatzes / der Bandbreite
+        - Starte deinen Server einmal mit QUIC, einmal mit TCP.
+        - Verwende qperf, um den Durchsatz über eine definierte Zeitspanne zu messen.
+        - Parallel kannst du iperf3 für den TCP-Test laufen lassen.
+
+        2. Verbindungsaufbauzeiten & Latenz
+        - Miss mit qperf wie lange der Verbindungsaufbau (Handshake) dauert (--e-Flag in qperf für „time to first byte“).
+        - Nutze qlog bei deinen QUIC-Verbindungen (je nach QUIC-Implementierung) und analysiere mit qvis die Ereignisse – das hilft dir, zu sehen, wann Pakete gesendet werden, wann ACKs kommen etc.
+
+        3. Fehlerszenarien / Stabilität
+        - Emuliere Netzwerkbedingungen (Verlust, Verzögerung, Jitter) – z. B. mit Traffic Control (tc) auf Linux oder in einer Testumgebung.
+        - Führe deine Messungen unter diesen Bedingungen durch (wieder mit qperf + iperf).
+        - Capturiere den Verkehr mit netsniff-ng oder tcpdump, um zu analysieren, wie QUIC vs TCP reagiert.
+
+        4. Tieferes Debug / Verhalten
+        - Logge intern mit qlog, wenn deine QUIC-Implementierung das unterstützt.
+        - Visualisiere Verbindungsereignisse mit qvis, um zu verstehen, wie sich Congestion Window, Loss Recovery, Streams etc. verhalten.
+
+        Wenn du magst, kann ich dir ein fertiges Benchmark-Skript schreiben (z. B. in Bash oder Python), das all diese Messungen automatisiert (QUIC vs TCP, Latenz, Durchsatz, Verlust). Soll ich das machen?
+
+Nächste Schritte:
+    - Eine Implementierung in Java mit dem Kwik Framework erstellen
+    - Oben genannte Tools ausprobieren (und tc).
