@@ -11,7 +11,7 @@ use tokio::io::AsyncWriteExt;
 async fn main() -> Result<()> {
     let mut roots = rustls::RootCertStore::empty();
     // roots.add_parsable_certificates(rustls_native_certs::load_native_certs().certs);
-    roots.add_parsable_certificates(PathBuf::from("../server/server.crt").to_certificate());
+    roots.add_parsable_certificates(PathBuf::from("../../server.crt").to_certificate());
 
     let quic_client = gm_quic::QuicClient::builder()
         .with_root_certificates(roots)

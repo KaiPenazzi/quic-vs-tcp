@@ -11,8 +11,8 @@ async fn main() -> Result<(), BuildServerError> {
     let _ = quic_listeners
         .add_server(
             "cooler_server",
-            include_bytes!("../server.crt"),
-            include_bytes!("../server.key"),
+            include_bytes!("../../../server.crt"),
+            include_bytes!("../../../server.key"),
             ["127.0.0.1:7000"],
             None,
         )
