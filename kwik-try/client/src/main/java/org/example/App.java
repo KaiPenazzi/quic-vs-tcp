@@ -3,8 +3,11 @@
  */
 package org.example;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 import tech.kwik.core.QuicClientConnection;
 import tech.kwik.core.QuicStream;
@@ -22,7 +25,15 @@ public class App {
 
         QuicStream quicStream = connection.createStream(true);
         OutputStream output = quicStream.getOutputStream();
-        output.write(10);
+        InputStream input = quicStream.getInputStream();
+
+        output.write("hi from client".getBytes());
         output.close();
+
+        byte[] buffer = input.readAllBytes();
+        String receivedData = new String(buffer, StandardCharsets.UTF_8);
+        System.out.println("server: " + receivedData);
+
+        Thread.sleep(2000);
     }
 }

@@ -3,8 +3,68 @@
  */
 package org.example;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.List;
+
+import tech.kwik.core.QuicConnection;
+import tech.kwik.core.QuicConnection.QuicVersion;
+import tech.kwik.core.log.FileLogger;
+import tech.kwik.core.log.Logger;
+import tech.kwik.core.log.SysOutLogger;
+import tech.kwik.core.server.ApplicationProtocolConnection;
+import tech.kwik.core.server.ApplicationProtocolConnectionFactory;
+import tech.kwik.core.server.ServerConnectionConfig;
+import tech.kwik.core.server.ServerConnector;
+
 public class App {
-    public static void main(String[] args) {
-        System.out.println("hi from server");
+    private static final String KEYSTORE_PATH = "../../keystore.p12";
+    private static final String KEYSTORE_PASSWORD = "keystorepass";
+    private static final String KEY_ALIAS = "kwikserver";
+
+    public static void main(String[] args) throws Exception {
+        KeyStore keystore = KeyStore.getInstance("PKCS12");
+
+        try (FileInputStream keystoreStream = new FileInputStream(new File(KEYSTORE_PATH).getAbsolutePath())) {
+
+            keystore.load(keystoreStream, KEYSTORE_PASSWORD.toCharArray());
+        }
+
+        Logger log = new SysOutLogger();
+
+        log.timeFormat(Logger.TimeFormat.Long);
+        log.logWarning(true);
+        log.logInfo(true);
+        log.logStream(true);
+
+        List<QuicConnection.QuicVersion> supportedVersions = new ArrayList<>();
+        supportedVersions.add(QuicConnection.QuicVersion.V1);
+        supportedVersions.add(QuicConnection.QuicVersion.V2);
+
+        ServerConnectionConfig config = ServerConnectionConfig.builder()
+                .maxIdleTimeoutInSeconds(30)
+                .maxUnidirectionalStreamBufferSize(1_000_000)
+                .maxBidirectionalStreamBufferSize(1_000_000)
+                .maxConnectionBufferSize(10_000_000)
+                .maxOpenPeerInitiatedUnidirectionalStreams(10)
+                .maxOpenPeerInitiatedBidirectionalStreams(100)
+                .retryRequired(true)
+                .connectionIdLength(8)
+                .build();
+
+        ServerConnector connector = ServerConnector.builder()
+                .withPort(7000)
+                .withSupportedVersions(supportedVersions)
+                .withKeyStore(keystore, KEY_ALIAS, KEYSTORE_PASSWORD.toCharArray())
+                .withConfiguration(config)
+                .withLogger(log)
+                .build();
+
+        connector.registerApplicationProtocol("quic", new MyQuicFactory(log));
+
+        connector.start();
     }
 }
