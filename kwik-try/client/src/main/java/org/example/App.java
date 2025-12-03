@@ -3,37 +3,18 @@
  */
 package org.example;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-
-import tech.kwik.core.QuicClientConnection;
-import tech.kwik.core.QuicStream;
-
 public class App {
     public static void main(String[] args) throws Exception {
-        System.out.println("hi from client");
-        QuicClientConnection connection = QuicClientConnection.newBuilder()
-                .noServerCertificateCheck()
-                .uri(URI.create("http://127.0.0.1:7000"))
-                .applicationProtocol("quic")
-                .build();
+        String url = "http://127.0.0.1:7000";
+        MyQuicClient client = new MyQuicClient(url);
 
-        connection.connect();
-
-        QuicStream quicStream = connection.createStream(true);
-        OutputStream output = quicStream.getOutputStream();
-        InputStream input = quicStream.getInputStream();
-
-        output.write("hi from client".getBytes());
-        output.close();
-
-        byte[] buffer = input.readAllBytes();
-        String receivedData = new String(buffer, StandardCharsets.UTF_8);
-        System.out.println("server: " + receivedData);
-
-        Thread.sleep(2000);
+        client.connect();
+        client.send("idk ich send einfach");
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            // do nothing
+        }
+        client.close();
     }
 }

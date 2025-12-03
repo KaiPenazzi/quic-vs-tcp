@@ -1,9 +1,12 @@
 package org.example;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.lang.Thread;
 
 import tech.kwik.core.QuicConnection;
 import tech.kwik.core.QuicStream;
@@ -21,22 +24,25 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
 
     @Override
     public void acceptPeerInitiatedStream(QuicStream stream) {
-        InputStream input = stream.getInputStream();
-        try {
-            byte[] buffer = input.readAllBytes();
-            String receivedData = new String(buffer, StandardCharsets.UTF_8);
-            this.log.info(stream.getStreamId() + ": " + receivedData);
-        } catch (IOException e) {
-            this.log.error("could not read message");
-        }
+        new Thread(() -> handleClient(stream)).start();
+    }
 
-        try {
-            OutputStream output = stream.getOutputStream();
-            output.write("hi from server".getBytes());
-            output.close();
-        } catch (IOException e) {
-            this.log.error("could not send message");
-        }
+    private void handleClient(QuicStream stream) {
+        try (InputStream in = stream.getInputStream()) {
 
+            byte[] buf = new byte[4096];
+            int len;
+
+            while ((len = in.read(buf)) != -1) {
+                if (len == 0)
+                    continue;
+
+                String msg = new String(buf, 0, len, StandardCharsets.UTF_8);
+                log.info("server recv: " + msg);
+            }
+
+        } catch (Exception e) {
+            log.error("stream failed", e);
+        }
     }
 }
