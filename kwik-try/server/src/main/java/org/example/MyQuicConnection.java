@@ -28,21 +28,42 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
     }
 
     private void handleClient(QuicStream stream) {
-        try (InputStream in = stream.getInputStream()) {
+        if (stream.isUnidirectional()) {
+            try (InputStream in = stream.getInputStream()) {
 
-            byte[] buf = new byte[4096];
-            int len;
+                byte[] buf = new byte[4096];
+                int len;
 
-            while ((len = in.read(buf)) != -1) {
-                if (len == 0)
-                    continue;
+                while ((len = in.read(buf)) != -1) {
+                    if (len == 0)
+                        continue;
 
-                String msg = new String(buf, 0, len, StandardCharsets.UTF_8);
-                log.info("server recv: " + msg);
+                    String msg = new String(buf, 0, len, StandardCharsets.UTF_8);
+                    log.info("server recv: " + msg);
+                }
+
+            } catch (Exception e) {
+                log.error("stream failed", e);
             }
+        }
+        if (stream.isBidirectional()) {
+            try (InputStream in = stream.getInputStream()) {
 
-        } catch (Exception e) {
-            log.error("stream failed", e);
+                byte[] buf = in.readAllBytes();
+                String msg = new String(buf, StandardCharsets.UTF_8);
+                log.info("recv: " + msg);
+
+                try (OutputStream out = stream.getOutputStream()) {
+                    log.info("echo try");
+                    out.write(("echo: " + msg).getBytes());
+                    out.close();
+                } catch (Exception e) {
+                    log.error("could not send msg: ", e);
+                }
+
+            } catch (Exception e) {
+                log.error("stream failed", e);
+            }
         }
     }
 }

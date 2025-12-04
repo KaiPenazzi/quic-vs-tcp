@@ -9,12 +9,22 @@ public class App {
         MyQuicClient client = new MyQuicClient(url);
 
         client.connect();
-        client.send("idk ich send einfach");
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            // do nothing
-        }
+        client.sendUnidirectional("idk ich send einfach");
+        String echo = client.sendResponse("echo pls");
+        System.out.println(echo);
+
+        int stream_id = client.open_stream();
+        client.send_msg_over(stream_id, "send over 1");
+
+        Thread.sleep(2000);
+
+        int stream_id2 = client.open_stream();
+        client.send_msg_over(stream_id2, "send over 2");
+
+        Thread.sleep(2000);
+
+        client.send_msg_over(stream_id, "send over 1, 2");
+
         client.close();
     }
 }

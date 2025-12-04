@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 
 import tech.kwik.core.QuicClientConnection;
 import tech.kwik.core.QuicStream;
@@ -16,9 +16,12 @@ public class MyQuicClient {
     private final URI uri;
     private QuicClientConnection connection;
 
+    private List<QuicStream> streams;
+
     public MyQuicClient(String url) {
         this.uri = URI.create(url);
         System.out.println(this.uri.toString());
+        streams = new ArrayList<QuicStream>();
     }
 
     public void connect() throws Exception {
@@ -32,14 +35,64 @@ public class MyQuicClient {
     }
 
     public String sendResponse(String msg) {
+        System.out.println("Send: " + msg);
+        try {
+            QuicStream stream = this.connection.createStream(true);
+            OutputStream out = stream.getOutputStream();
+            InputStream in = stream.getInputStream();
+            out.write(msg.getBytes());
+            out.close();
+            byte[] buf = in.readAllBytes();
+            return new String(buf, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            System.out.println("could not send Message: " + e.toString());
+        }
         return "";
     }
 
     public void sendUnidirectional(String msg) {
+        System.out.println("Send: " + msg);
+        try {
+            QuicStream stream = this.connection.createStream(false);
+            OutputStream out = stream.getOutputStream();
+            out.write(msg.getBytes());
+            out.close();
+        } catch (IOException e) {
+            System.out.println("could not send Message: " + e.toString());
+        }
+    }
 
+    public void send_msg_over(int stream_id, String msg) {
+        QuicStream stream = this.streams.get(stream_id);
+        try {
+            OutputStream out = stream.getOutputStream();
+            out.write(msg.getBytes());
+            out.flush();
+        } catch (Exception e) {
+            System.out.println("could not send msg: " + e.toString());
+        }
+    }
+
+    public int open_stream() throws IOException {
+        QuicStream stream = connection.createStream(false);
+        this.streams.add(stream);
+        return this.streams.size() - 1;
+    }
+
+    public void close_stream(int stream_id) {
+        QuicStream stream = this.streams.get(stream_id);
+        try {
+            OutputStream out = stream.getOutputStream();
+            out.close();
+        } catch (IOException e) {
+            System.out.println("could close stream: " + "id: " + stream_id + "\n" + e.toString());
+        }
     }
 
     public void close() {
-
+        for (int i = 0; i < this.streams.size(); i++) {
+            this.close_stream(i);
+        }
+        this.connection.close();
     }
 }
