@@ -1,0 +1,11 @@
+\subsection{Verbindungsaufbau}
+Beim Aufbau einer Verbindung über TCP erfolgt zunächst ein dreistufiger Handshake (SYN, SYN-ACK, ACK), um eine zuverlässige, geordnete Verbindung herzustellen.
+Dieser Handshake verursacht mindestens eine Round-Trip-Time (RTT), bevor Daten übertragen werden können.
+Wird zusätzlich eine Verschlüsselung wie TLS eingesetzt, muss über der bereits etablierten TCP-Verbindung ein weiterer Handshake stattfinden, der in der Regel ein bis zwei zusätzliche RTTs benötigt, bis die fertige Verbindung Aufgebaut ist.
+In Szenarien mit vielen kurzen Verbindungen summieren sich diese Verzögerungen und können die Performance erheblich beeinträchtigen.
+\\
+Das QUIC-Protokoll verwendet UDP als Transportbasis und baut darauf eine eigene Verbindungsschicht auf.
+Bereits beim ersten Verbindungsaufbau werden die Verschlüsselungsschlüssel ausgehandelt, sodass dafür in der Regel eine RTT erforderlich ist.
+Bei einem Wiederaufbau einer bereits bekannten Verbindung (Reconnect) kann der Handshake sogar ohne zusätzliche RTTs (0-RTT) erfolgen.
+Durch diese Integration von Transport- und Sicherheitsmechanismen reduziert QUIC die Latenz beim Verbindungsaufbau erheblich und eignet sich besonders für Anwendungen mit häufigen oder kurzlebigen Verbindungen.
+\newpage
