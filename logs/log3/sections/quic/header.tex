@@ -1,0 +1,54 @@
+\subsection{Paket}
+
+QUIC-Kommunikation erfolgt über UDP-Datagramme, die ein oder mehrere QUIC-Pakete zwischen Endpunkten transportieren.
+Jedes QUIC-Paket besteht aus einem Header und einem oder mehreren Frames, die die eigentlichen Nutzdaten und Steuerinformationen enthalten.
+QUIC definiert dabei verschiedene Header- und Pakettypen, die unterschiedliche Funktionen wie Verbindungshandshake oder schnellen Datentransport übernehmen.
+
+\subsubsection{Header}
+QUIC läuft auf UDP, was bedeutet, dass die Zuordnung zu Anwendung und Endpunkten bereits durch die IP-Adressen und Ports auf UDP-Ebene erfolgt.
+Da QUIC auf Anwendungsschicht arbeitet, muss es nur noch die Zuordnung auf Verbindungsebene sicherstellen.
+QUIC verwendet zwei verschiedene Header-Typen.
+Der Long Header wird für den Verbindungsaufbau verwendet, während der Short Header bei bereits etablierte Verbindungen verwendet wird.
+
+\paragraph{Longheader:}\cite{alawaji_ietf_nodate}
+
+\begin{itemize}
+    \item \textbf{Header Form (HF):} Identifiziert den Header-Typ.
+    \item \textbf{Fixed Bit (FB):} Zeigt an, ob das Paket gültig ist oder nicht. Ist das Bit auf 0 gesetzt, ist das Paket ungültig.
+    \item \textbf{Long Packet Type (T):} Gibt den Typ des Long-Header-Pakets an, siehe Tabelle 1.
+    \item \textbf{Type-Specific Bits (S):} Bits, die spezifisch für die jeweiligen Long-Header-Pakettypen sind.
+    \item \textbf{Version ID (VID):} 32 Bit zur Identifikation der QUIC-Version.
+    \item \textbf{Destination Connection ID Length (DCID Len):} Länge der Ziel-Connection-ID.
+    \item \textbf{Destination Connection ID (DCID):} Ziel-Connection-ID.
+    \item \textbf{Source Connection ID Length (SCID Len):} Länge der Quell-Connection-ID.
+    \item \textbf{Source Connection ID (SCID):} Quell-Connection-ID.
+\end{itemize}
+    %zitieren nicht vergessen
+\paragraph{Shortheader:} \cite{alawaji_ietf_nodate}
+
+\begin{itemize}
+    \item \textbf{Header Form (HF):} Identifiziert den Header-Typ.
+    \item \textbf{Fixed Bit (FB):} Zeigt an, ob das Paket gültig ist oder nicht.
+    \item \textbf{Spin Bit:} Wird zur Latenzmessung verwendet.
+    \item \textbf{Reserved Bits:} Für zukünftige Erweiterungen reserviert.
+    \item \textbf{Key Phase:} Gibt an, welcher Verschlüsselungsschlüssel für das Paket verwendet wird.
+    \item \textbf{Packet Number Length (P):} Länge der Paketnummer.
+    \item \textbf{Destination Connection ID (DCID):} Ziel-Connection-ID.
+    \item \textbf{Packet Number:} Monoton steigende Paketnummer zur Verlustdetektion und ACKs.
+    \item \textbf{Packet Payload:} Enthält die Frames des Pakets (STREAM, ACK, PADDING etc.).
+\end{itemize}
+
+Diese Struktur ermöglicht es QUIC, die Stärken von TCP, wie etwa zuverlässige Datenübertragung, zu übernehmen, während gleichzeitig Verschlüsselung, Integrität und eine flexible Zuordnung von Verbindungen auf Anwendungsebene implementiert werden können.
+Die Verwendung unterschiedlicher Header-Typen sorgt dafür, dass das Protokoll effizient bleibt.
+
+\subsubsection{Frame}
+
+Ein Frame enthält die Daten eines Streams, der über QUIC übertragen wird.
+
+\begin{itemize}
+    \item \textbf{Type:} Gibt die Art des Frames an, z. B. Stream-Daten, ACK oder Control-Informationen.
+    \item \textbf{Stream ID:} Identifiziert den Stream, zu dem die Daten gehören. Ungerade IDs stehen für vom Client initiierte Streams, gerade IDs für vom Server initiierte Streams.
+    \item \textbf{Offset:} Gibt die Position der Daten innerhalb des Streams an, ähnlich dem TCP-Offset.
+    \item \textbf{Data Length:} Die Länge der übertragenen Daten in Bytes.
+    \item \textbf{Stream Data:} Die eigentlichen Nutzdaten des Streams.
+\end{itemize}

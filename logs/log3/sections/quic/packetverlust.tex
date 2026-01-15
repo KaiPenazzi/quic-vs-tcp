@@ -1,0 +1,34 @@
+\subsection{Paketverlust \& Fehlerbehandlung}
+
+QUIC übernimmt viele grundlegende Konzepte der Verlustbehandlung aus TCP, darunter schnelle Wiederübertragungen sowie timeoutbasierte Mechanismen zur Verlustdetektion.
+Durch die Trennung von Transport- und Anwendungsschicht sowie den Betrieb im Userspace erweitert QUIC diese Mechanismen jedoch um zusätzliche Informationen.
+
+\subsubsection{Packet- und Datenzuordnung}
+
+Ein zentraler Unterschied zwischen TCP und QUIC liegt in der Handhabung der Sequenznummern. Während TCP eine einzige Sequenznummer für die gesamte Übertragung verwendet, verwendet QUIC ein abgewandelteres Konzept.
+Jedes Paket erhält eine monoton steigende Paketnummer, die für ACKs, RTT-Messungen und Loss Detection verwendet wird.
+Die eigentlichen Daten werden zusätzlich durch Stream-ID und Stream-Offset identifiziert, wodurch die Reihenfolge innerhalb eines Streams eindeutig bestimmt ist.
+Durch diese Trennung kann QUIC jederzeit genau nachvollziehen, welche Pakete bestätigt wurden und welche verloren gingen, was die RTT-Berechnung und die Verlustbehandlung deutlich vereinfacht.
+
+\subsubsection{Ack-Zurücknehmen}
+
+QUIC erlaubt kein Zurücknehmen bereits bestätigter Pakete. Dadurch wird die Verlustbehandlung auf beiden seiten vereinfacht.
+
+\subsubsection{Ack-Ranges}
+
+Im Gegensatz zu TCP, das ACKs höchstens drei SACK-Ranges unterstützt, erlaubt QUIC mehrere ACK-Ranges in einem einzelnen ACK-Paket.
+Diese Flexibilität beschleunigt die Paketverlust-Erkennung und reduziert unnötige Retransmissions insbesondere in Netzen mit hohem Paketverlust.
+
+\subsubsection{Korrektur für verzögerte ACKs}
+QUIC-ACKs kodieren explizit die Verzögerung, die beim Empfänger zwischen dem Eintreffen eines Pakets und dem Versenden der zugehörigen Bestätigung entsteht.
+Dadurch kann der Empfänger des ACKs die empfangsseitige Verzögerungen in der Schätzung der RTT berücksichtigen.
+
+\subsubsection{Fehlererkennung}
+
+TCP verwendet auf Paketebene eine Prüfsumme, um sicherzustellen, dass Header und Daten auf dem Transportweg nicht verändert wurden.
+QUIC gewährleistet die Integrität und Manipulationssicherheit seiner Pakete hingegen über die in das Protokoll integrierte TLS-1.3-Verschlüsselung.
+Jedes QUIC-Paket wird dabei verschlüsselt und enthält einen Authentifizierungs-Tag, sodass Änderungen am Header oder an den enthaltenen Frames vom Empfänger zuverlässig erkannt werden.
+Auf diese Weise übernimmt QUIC die Funktion der klassischen TCP-Prüfsumme, erweitert diese jedoch um kryptographisch gesicherte Integrität.
+\\
+Wie auch bei TCP enthält QUIC standardmäßig keine Forward Error Correction Funktionalität, aufgrund der Implementierung im Userspace ist es jedoch deutlich einfacher, solche Erweiterungen nachträglich in QUIC zu integrieren.
+\newpage
