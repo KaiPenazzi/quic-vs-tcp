@@ -1,4 +1,4 @@
-\subsection{Paketverlust \& Fehlerbehandlung}
+\subsection{Paketverlust und Fehlerbehandlung}
 
 QUIC übernimmt viele grundlegende Konzepte der Verlustbehandlung aus TCP, darunter schnelle Wiederübertragungen sowie timeoutbasierte Mechanismen zur Verlustdetektion.
 Durch die Trennung von Transport- und Anwendungsschicht sowie den Betrieb im Userspace erweitert QUIC diese Mechanismen jedoch um zusätzliche Informationen.
@@ -12,16 +12,16 @@ Durch diese Trennung kann QUIC jederzeit genau nachvollziehen, welche Pakete bes
 
 \subsubsection{Ack-Zurücknehmen}
 
-QUIC erlaubt kein Zurücknehmen bereits bestätigter Pakete. Dadurch wird die Verlustbehandlung auf beiden seiten vereinfacht.
+QUIC erlaubt kein Zurücknehmen bereits bestätigter Pakete. Dadurch wird die Verlustbehandlung auf beiden seiten vereinfacht. \cite{iyengar_quic_2018}
 
 \subsubsection{Ack-Ranges}
 
 Im Gegensatz zu TCP, das ACKs höchstens drei SACK-Ranges unterstützt, erlaubt QUIC mehrere ACK-Ranges in einem einzelnen ACK-Paket.
-Diese Flexibilität beschleunigt die Paketverlust-Erkennung und reduziert unnötige Retransmissions insbesondere in Netzen mit hohem Paketverlust.
+Diese Flexibilität beschleunigt die Paketverlust-Erkennung und reduziert unnötige Retransmissions insbesondere in Netzen mit hohem Paketverlust. \cite{iyengar_quic_2018}
 
 \subsubsection{Korrektur für verzögerte ACKs}
 QUIC-ACKs kodieren explizit die Verzögerung, die beim Empfänger zwischen dem Eintreffen eines Pakets und dem Versenden der zugehörigen Bestätigung entsteht.
-Dadurch kann der Empfänger des ACKs die empfangsseitige Verzögerungen in der Schätzung der RTT berücksichtigen.
+Dadurch kann der Empfänger des ACKs die empfangsseitige Verzögerungen in der Schätzung der RTT berücksichtigen. \cite{iyengar_quic_2018}
 
 \subsubsection{Fehlererkennung}
 
