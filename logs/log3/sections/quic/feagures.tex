@@ -1,0 +1,27 @@
+\subsection{QUIC Features}
+Durch die Architektur und dem Aufbau auf UDP kann QUIC zusätzliche Features implementieren, die über die Möglichkeiten klassischer TCP-Verbindungen hinausgehen.
+
+\subsubsection{Head-Of-Line Blocking}
+Head-of-Line Blocking passiert, wenn zum Beispiel HTTP/1.1 oder HTTP/2 mehrere parallele TCP-Verbindungen aufbauen, um mehrere Ressourcen gleichzeitig zu übertragen.
+Kommt es in einer dieser Verbindungen zu Verzögerungen oder Paketverlusten, blockieren die darauf aufbauenden Daten anderer Verbindungen, obwohl diese eigentlich schon übertragen werden könnten.
+Dadurch wird die gesamte Übertragung unnötig verlangsamt.
+
+QUIC löst dieses Problem, indem es mehrere unabhängige Streams über eine einzige Verbindung laufen lässt.
+Geht auf Verbindungsebene ein Paket verloren, kümmert sich QUIC um das Pakethandling und die Retransmission nur für den betroffenen Stream, während die anderen Streams weiterhin ungehindert übertragen werden.
+Dadurch wird Head-of-Line Blocking effektiv vermieden und der Datenfluss insgesamt schneller und effizienter.
+
+\subsubsection{Connection Migration}
+Ein weiteres Feature von QUIC ist die Connection Migration.
+Dabei bleibt die Verbindung bestehen, selbst wenn sich die IP-Adresse oder das Netzwerk des Clients ändert, etwa beim Wechsel zwischen WLAN und Mobilfunk.
+TCP-Verbindungen würden in einem solchen Fall abbrechen und müssten neu aufgebaut werden.
+QUIC ermöglicht dies, da die Nachrichten über UDP übertragen werden und die Connection ID im Header die Verbindung eindeutig identifiziert.
+
+\subsubsection{0-RTT}
+QUIC unterstützt 0‑RTT, wodurch beim Wiederaufbau einer Verbindung der Client sofort Daten senden kann, ohne den vollständigen Handshake erneut durchlaufen zu müssen. Dafür wird ein spezieller 0‑RTT Long Header verwendet, der die Verbindung eindeutig identifiziert und die Daten korrekt dem jeweiligen Stream zuordnet.
+
+\subsubsection{Verschlüsselung}
+TLS 1.3 ist in QUIC implementiert, wodurch die Daten verschlüsselt sind und gegen Manipulation geschützt werden.
+Ein zusätzlicher Verschlüsselungslayer ist dadurch nicht erforderlich.
+
+\subsubsection{User-Space Implementierung}
+Da QUIC im Userspace arbeitet, können Erweiterungen, Updates oder experimentelle Features deutlich einfacher implementiert werden als bei klassischen Kernel-basierten TCP-Stacks.
