@@ -7,5 +7,10 @@ In Szenarien mit vielen kurzen Verbindungen summieren sich diese Verzögerungen 
 Das QUIC-Protokoll verwendet UDP als Transportbasis und baut darauf eine eigene Verbindungsschicht auf.
 Bereits beim ersten Verbindungsaufbau werden die Verschlüsselungsschlüssel ausgehandelt, sodass dafür in der Regel eine RTT erforderlich ist.
 Eine Wiederverbindung kann sogar ohne zusätzlichen Verbindungsaufbau erfolgen (0-RTT).
-Durch diese Integration von Transport- und Sicherheitsmechanismen reduziert QUIC die Latenz beim Verbindungsaufbau erheblich und eignet sich besonders für Anwendungen mit häufigen oder kurzlebigen Verbindungen.
-\newpage
+Durch diese Integration von Transport- und Sicherheitsmechanismen reduziert QUIC die Latenz beim Verbindungsaufbau erheblich, wodurch es auch für Anwendungen mit häufigen oder kurzlebigen Verbindungen interessant wird.
+
+\subsubsection{Flusscontrolle}
+
+TCP und QUIC verwenden einen ähnlichen Congestion-Control-Mechanismus, um eine Überlastung des Netzwerks zu vermeiden. TCP nutzt dafür Algorithmen wie NewReno oder CUBIC, die die Menge an unbestätigten Paketen (in-flight) überwachen und das Senden neuer Pakete bremsen, sobald Paketverluste auftreten.
+
+QUIC übernimmt diese Grundprinzipien und wendet die gleichen Algorithmen wie TCP an, verfolgt die Übertragung jedoch auf Ebene der Bytes-in-Flight, was eine feinere Kontrolle der Daten ermöglicht. Wie bei TCP dürfen auch bei QUIC Pakete nur gesendet werden, solange die Congestion-Window-Grenze nicht überschritten wird.
