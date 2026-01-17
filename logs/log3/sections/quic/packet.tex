@@ -4,6 +4,12 @@ QUIC-Kommunikation erfolgt über UDP-Datagramme, die ein oder mehrere QUIC-Paket
 Jedes QUIC-Paket besteht aus einem Header und einem oder mehreren Frames, die die eigentlichen Nutzdaten und Steuerinformationen enthalten.
 QUIC definiert dabei verschiedene Header- und Pakettypen, die unterschiedliche Funktionen wie Verbindungshandshake oder schnellen Datentransport übernehmen.
 
+
+\begin{figure}[htbp]
+    \includegraphics[width=0.8\textwidth]{pictures/quic_packet.png}
+    \caption{QUIC-Packet \cite{alawaji_ietf_nodate}}
+\end{figure}
+
 \subsubsection{Header}
 QUIC läuft auf UDP, was bedeutet, dass die Zuordnung zu Anwendung und Endpunkten bereits durch die IP-Adressen und Ports auf UDP-Ebene erfolgt.
 Da QUIC auf Anwendungsschicht arbeitet, muss es nur noch die Zuordnung auf Verbindungsebene sicherstellen.
@@ -11,11 +17,14 @@ QUIC verwendet zwei verschiedene Header-Typen.
 Der Long Header wird für den Verbindungsaufbau verwendet, während der Short Header bei bereits etablierte Verbindungen verwendet wird.
 
 \paragraph{Longheader:}\cite{alawaji_ietf_nodate}
-
+\begin{figure}[htbp]
+    \includegraphics[width=0.8\textwidth]{pictures/quic_header_long.png}
+    \caption{QUIC-Longheader \cite{alawaji_ietf_nodate}}
+\end{figure}
 \begin{itemize}
     \item \textbf{Header Form (HF):} Identifiziert den Header-Typ.
     \item \textbf{Fixed Bit (FB):} Zeigt an, ob das Paket gültig ist oder nicht. Ist das Bit auf 0 gesetzt, ist das Paket ungültig.
-    \item \textbf{Long Packet Type (T):} Gibt den Typ des Long-Header-Pakets an, siehe Tabelle 1.
+    \item \textbf{Long Packet Type (T):} Gibt den Typ des Long-Header-Pakets an, siehe Figure 5.
     \item \textbf{Type-Specific Bits (S):} Bits, die spezifisch für die jeweiligen Long-Header-Pakettypen sind.
     \item \textbf{Version ID (VID):} 32 Bit zur Identifikation der QUIC-Version.
     \item \textbf{Destination Connection ID Length (DCID Len):} Länge der Ziel-Connection-ID.
@@ -23,9 +32,16 @@ Der Long Header wird für den Verbindungsaufbau verwendet, während der Short He
     \item \textbf{Source Connection ID Length (SCID Len):} Länge der Quell-Connection-ID.
     \item \textbf{Source Connection ID (SCID):} Quell-Connection-ID.
 \end{itemize}
-    %zitieren nicht vergessen
-\paragraph{Shortheader:} \cite{alawaji_ietf_nodate}
+\begin{figure}[htbp]
+    \includegraphics[width=0.8\textwidth]{pictures/table_header_types.png}
+    \caption{Longheader Packet Typ \cite{alawaji_ietf_nodate}}
+\end{figure}
 
+\paragraph{Shortheader:} \cite{alawaji_ietf_nodate}
+\begin{figure}[htbp]
+    \includegraphics[width=0.8\textwidth]{pictures/quic_header_short.png}
+    \caption{QUIC-Shortheader \cite{alawaji_ietf_nodate}}
+\end{figure}
 \begin{itemize}
     \item \textbf{Header Form (HF):} Identifiziert den Header-Typ.
     \item \textbf{Fixed Bit (FB):} Zeigt an, ob das Paket gültig ist oder nicht.
