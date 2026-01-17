@@ -1,0 +1,13 @@
+\subsection{Architektur}
+QUIC ist, ähnlich wie TCP, ein verbindungsorientiertes Client-Server-Protokoll.
+Viele Anwendungsprotokolle, die auf TCP basieren, nutzen mehrere parallele TCP-Verbindungen, um verschiedene Datenströme gleichzeitig zu übertragen.
+
+Bei QUIC ist der Aufbau mehrerer Verbindungen nicht mehr erforderlich, da innerhalb einer einzelnen QUIC-Verbindung mehrere unabhängige Streams parallel übertragen werden können.
+Diese Trennung von Verbindung und Datenströmen ist ein zentrales Architekturprinzip von QUIC und bildet die Grundlage für den weiteren Paket- und Frame-Aufbau.
+
+\begin{figure}[htbp]
+    \includegraphics[width=0.8\textwidth]{pictures/tcp_connection.png}
+    \caption{Parallelisierte Datenübertragung über mehrere TCP-Verbindungen \cite{kumar_quic_2020}}
+    \includegraphics[width=0.8\textwidth]{pictures/quic_connection.png}
+    \caption{Parallelisierte Datenübertragung über eine einzelne QUIC-Verbindung \cite{kumar_quic_2020}}
+\end{figure}
