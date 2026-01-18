@@ -1,16 +1,11 @@
-\documentclass{article}
-
-\usepackage[utf8]{inputenc}
-
-\begin{document}
-
-\section{Einleitung}
-Dieses Dokument dient dazu, drei Open-Source-Implementierungen des QUIC-Protokolls für Java miteinander zu vergleichen: Kwik, Quiche/quiche4j sowie das QUIC-Modul von Netty (netty-incubator-codec-quic).
-Ziel ist es, die unterschiedlichen Abstraktionsebenen, Architekturansätze und den Integrationsaufwand der jeweiligen Bibliotheken gegenüberzustellen.
+\section{Analyse von Java-QUIC-Frameworks}
+QUIC ist inzwischen kein rein theoretisches Protokoll mehr, sondern wird aktiv in Anwendungen eingesetzt. 
+Im Folgenden werden drei Open-Source-Implementierungen des QUIC-Protokolls für Java betrachtet Kwik, Quiche4J sowie das QUIC-Modul von Netty (netty-incubator-codec-quic).
+Ziel der Analyse ist es, die jeweiligen APIs hinsichtlich Abstraktionsgrad und Integrationsaufwand zu vergleichen und einzuordnen, für welche Einsatzszenarien sich die einzelnen Frameworks besonders eignen.
 
 \newpage
-\section{Client Implementierungsvergleich}
-\subsection{Kwik}
+\subsection{Client Implementierungsvergleich}
+\subsubsection{Kwik}
 
 Zunächst muss eine Verbindung aufgebaut werden. Dazu wird ein `QuicClientConnection` erstellt, konfiguriert und anschließend mit wird mit `connect()` die Verbindung aufgebaut. 
 
@@ -24,7 +19,6 @@ QuicClientConnection connection = QuicClientConnection.newBuilder()
 connection.connect();
 \end{verbatim}
 
-\noindent
 Nach dem Verbindungsaufbau können Streams erstellt werden, über die Daten gelesen und geschrieben werden.
 
 \begin{verbatim}
@@ -36,7 +30,6 @@ InputStream input = quicStream.getInputStream();
 input.read(...)
 \end{verbatim}
 
-\noindent
 Kwik bietet ein High-Level-API für QUIC in Java.
 \begin{itemize}
     \item Die Verbindung wird über `connect()` aufgebaut, inklusive Handshake und Socket-Management.
@@ -45,9 +38,7 @@ Kwik bietet ein High-Level-API für QUIC in Java.
     \item Entwickler müssen sich kaum um Low-Level-Netzwerkdetails kümmern, Kwik übernimmt die meisten Aufgaben automatisch.
 \end{itemize}
 
-\subsection{Quiche/quiche4j}
-
-\noindent
+\subsubsection{Quiche/Quiche4j}
 Zuerst muss ein Connection-Objekt erzeugt werden:
 
 \begin{verbatim}
@@ -56,10 +47,9 @@ final byte[] connId = Quiche.newConnectionId();
 final Connection conn = Quiche.connect("127.0.0.1:7000", connId, config);
 \end{verbatim}
 
-\noindent
-Damit Quiche die Verbindung aufbauen kann, müssen regelmäßig die send- und recv-Loops ausgeführt werden. Der Entwickler muss dabei selbst entscheiden, wie und wie oft diese Loops ausgeführt werden und welcher UDP-Socket verwendet wird.
+Damit Quiche die Verbindung aufbauen kann, müssen regelmäßig die Send- und Recv-Loops ausgeführt werden. Der Entwickler muss dabei selbst entscheiden, wie und wie oft diese Loops ausgeführt werden und welcher UDP-Socket verwendet wird.
 
-\subsubsection{Recv-Loop}
+\paragraph{Recv-Loop}
 \begin{verbatim}
 final byte[] buf = new byte[1350];
 while(true) {
@@ -72,7 +62,7 @@ while(true) {
 }
 \end{verbatim}
 
-\subsubsection{Send-Loop}
+\paragraph{Send-Loop}
 \begin{verbatim}
 while(true) {
     final int len = conn.send(buf); // fragt, welche Pakete gesendet werden müssen
@@ -82,7 +72,6 @@ while(true) {
 }
 \end{verbatim}
 
-\noindent
 Sobald die Verbindung \textit{established} ist, kann der Entwickler Nachrichten auf einem Stream senden:
 
 \begin{verbatim}
@@ -92,7 +81,6 @@ if(conn.isEstablished()) {
 }
 \end{verbatim}
 
-\noindent
 Zum Empfangen von Nachrichten können alle lesbaren Streams durchlaufen werden:
 
 \begin{verbatim}
@@ -108,7 +96,6 @@ if(conn.isEstablished()) {
 }
 \end{verbatim}
 
-\noindent
 Quiche4j bietet ein Low-Level-API für QUIC in Java.
 \begin{itemize}
     \item Quiche stellt nur die QUIC-State-Machine bereit. UDP-Sockets, Event-Loops und Paketversand müssen vom Entwickler selbst bereitgestellt und verwaltet werden, z.B. über regelmäßige `recv()`- und `send()`-Loops.
@@ -119,7 +106,6 @@ Quiche4j bietet ein Low-Level-API für QUIC in Java.
 
 \subsubsection{Netty QUIC}
 
-\noindent
 Zuerst wird der SSL-Kontext für den Client erstellt und das Netty-Eventloop-Group initialisiert:
 
 \begin{verbatim}
@@ -131,7 +117,6 @@ QuicSslContext context =
 NioEventLoopGroup group = new NioEventLoopGroup(1);
 \end{verbatim}
 
-\noindent
 Anschließend wird der QUIC-Codec konfiguriert und ein Channel für die Verbindung erstellt:
 
 \begin{verbatim}
@@ -146,7 +131,6 @@ Channel channel = bs.group(group)
     .bind(0).sync().channel();
 \end{verbatim}
 
-\noindent
 Die QUIC-Verbindung wird aufgebaut:
 
 \begin{verbatim}
@@ -156,7 +140,6 @@ QuicChannel quicChannel = QuicChannel.newBootstrap(channel)
     .get();
 \end{verbatim}
 
-\noindent
 Sobald die Verbindung steht, können Streams erstellt und Daten gesendet bzw. empfangen werden:
 
 \begin{verbatim}
@@ -178,7 +161,6 @@ streamChannel.writeAndFlush(
 );
 \end{verbatim}
 
-\noindent
 Netty QUIC integriert QUIC in das Netty-Eventloop-Modell.  
 \begin{itemize}
     \item Die Verbindung wird automatisch über `connect()` aufgebaut, inklusive Handshake.  
@@ -188,13 +170,11 @@ Netty QUIC integriert QUIC in das Netty-Eventloop-Modell.
 \end{itemize}
 
 \newpage
-\section{Server-Implementierung}
-\subsection{Kwik}
+\subsection{Server-Implementierung}
+\subsubsection{Kwik}
 
-\noindent
 Für einen Kwik-basierten QUIC-Server müssen zunächst zwei Kernklassen implementiert werden: eine Factory, die neue Verbindungen erzeugt, und die konkrete Connection-Klasse, die Streams akzeptiert und verarbeitet.
 
-\noindent
 Zuerst die Factory-Klasse, die bei neuen eingehenden Verbindungen eine `MyQuicConnection` erstellt:
 
 \begin{verbatim}
@@ -208,7 +188,6 @@ public class MyQuicFactory implements ApplicationProtocolConnectionFactory {
 }
 \end{verbatim}
 
-\noindent
 Dann die konkrete Connection-Klasse, die vom Framework aufgerufen wird, wenn ein Peer einen Stream startet. Hier kann die eigentliche Verarbeitung der Daten stattfinden.
 
 \begin{verbatim}
@@ -226,7 +205,6 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
 }
 \end{verbatim}
 
-\noindent
 Abschließend muss der Server konfiguriert und gestartet werden. Dazu werden Keystore, Logger, unterstützte QUIC-Versionen und weitere Parameter gesetzt. Anschließend wird die Factory für das gewünschte Application Protocol registriert und der Server gestartet:
 
 \begin{verbatim}
@@ -255,9 +233,8 @@ connector.registerApplicationProtocol("quic", new MyQuicFactory(log));
 connector.start();
 \end{verbatim}
 
-\subsection{Quiche/quiche4j}
-\noindent
-Bei Quiche/quiche4j ist der Serveraufbau sehr ähnlich zum Client. Der einzige Unterschied besteht darin, dass anstelle von `connect()` die Methode `accept()` verwendet wird, um eingehende Verbindungen zu akzeptieren.
+\subsubsection{Quiche/Quiche4j}
+Bei Quiche/Quiche4j ist der Serveraufbau sehr ähnlich zum Client. Der einzige Unterschied besteht darin, dass anstelle von `connect()` die Methode `accept()` verwendet wird, um eingehende Verbindungen zu akzeptieren.
 
 \begin{verbatim}
 final Config config = new ConfigBuilder(Quiche.PROTOCOL_VERSION).build();
@@ -266,14 +243,12 @@ final byte[] connId = Quiche.newConnectionId();
 final Connection conn = Quiche.accept(sourceConnId, originalDestinationId, config);
 \end{verbatim}
 
-\noindent
 Wie beim Client müssen auch hier die Loops zum Empfangen und Senden von Paketen vom Entwickler bereitgestellt und ausgeführt werden.
 Der Entwickler ist dafür verantwortlich, den UDP-Socket zu verwalten und die QUIC-State-Machine regelmäßig zu aktualisieren.
 
 
-\subsection{Netty QUIC Server}
+\subsubsection{Netty QUIC Server}
 
-\noindent
 Für einen Netty-basierten QUIC-Server müssen zunächst TLS-Zertifikate und der QUIC-SSL-Kontext erstellt werden. In diesem Beispiel wird ein selbstsigniertes Zertifikat verwendet:
 
 \begin{verbatim}
@@ -283,7 +258,6 @@ QuicSslContext context = QuicSslContextBuilder.forServer(
         .build();
 \end{verbatim}
 
-\noindent
 Anschließend wird das QUIC-Codec für den Server erstellt und ein Stream-Handler registriert.
 
 \begin{verbatim}
@@ -307,7 +281,6 @@ ChannelHandler codec = new QuicServerCodecBuilder()
     .build();
 \end{verbatim}
 
-\noindent
 Zum Schluss wird der Server gestartet, der UDP-Socket gebunden und auf eingehende Verbindungen gewartet:
 
 \begin{verbatim}
@@ -324,30 +297,7 @@ try {
 }
 \end{verbatim}
 
-\newpage
-\section{Fazit}
-
-\noindent
-Die drei verglichenen Java-QUIC-Implementierungen zeigen unterschiedliche Abstraktionsgrade und Integrationsaufwände:
-
-\begin{itemize}
-    \item \textbf{Kwik:} Bietet eine High-Level-API, die Handshake, Socket-Management und Stream-Verwaltung automatisch übernimmt. Ideal für schnelle Implementierungen ohne tiefe Netzwerkkenntnisse.
-    \item \textbf{Quiche/quiche4j:} Stellt lediglich die QUIC-State-Machine bereit. Der Entwickler muss UDP-Socket, Eventloop und Handshake selbst implementieren. Maximale Flexibilität, aber hoher Aufwand.
-    \item \textbf{Netty QUIC:} Integriert QUIC in das Netty-Eventloop-Modell. Handshake und UDP-Transport werden größtenteils verwaltet, Streams werden über Netty-Channels bereitgestellt. Gut geeignet für Anwendungen, die bereits auf Netty basieren.
-\end{itemize}
-
-\noindent
-Zusammenfassend gilt: Kwik für einfache Clients, Netty für Netty-basierte Systeme mit Bedarf an Eventloop-Integration, Quiche für maximale Kontrolle über die QUIC-Protokollabläufe.
+\include{sections/api_analyse/funktions.tex}
 
 \newpage
-
-\section{Quellen}
-Alle Beispiele sind so nahe wie möglich aus den jeweiligen Dokumentationen hergeleitet:
-\begin{itemize}
-    \item \textbf{Kwik:} https://github.com/ptrd/kwik
-    \item \textbf{Quiche/quiche4j:} https://github.com/kachayev/quiche4j
-    \item \textbf{Netty QUIC:} https://github.com/netty/netty-incubator-codec-quic/blob/main/codec-native-quic/src/test/java/io/netty/incubator/codec/quic/example/QuicServerExample.java
-\end{itemize}
-
-\end{document}
-
+\newpage

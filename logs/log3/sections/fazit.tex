@@ -1,0 +1,26 @@
+\section{Fazit}
+
+\subsection{Java-Frameworks}
+
+Die drei verglichenen Java-QUIC-Implementierungen zeigen unterschiedliche Abstraktionsgrade und Integrationsaufwände:
+
+\begin{itemize}
+    \item \textbf{Kwik:} Bietet eine High-Level-API, die Handshake, Socket-Management und Stream-Verwaltung automatisch übernimmt. Ideal für schnelle Implementierungen ohne tiefe Netzwerkkenntnisse.
+    \item \textbf{Quiche/Quiche4j:} Stellt lediglich die QUIC-State-Machine bereit. Der Entwickler muss UDP-Socket, Eventloop und Handshake selbst implementieren. Maximale Flexibilität, aber hoher Aufwand.
+    \item \textbf{Netty QUIC:} Integriert QUIC in das Netty-Eventloop-Modell. Handshake und UDP-Transport werden größtenteils verwaltet, Streams werden über Netty-Channels bereitgestellt. Gut geeignet für Anwendungen, die bereits auf Netty basieren.
+\end{itemize}
+
+Zusammenfassend lässt sich festhalten, dass Kwik sich für übersichtliche Client- und Serveranwendungen eignet, bei denen eine klare QUIC-Abstraktion und eine einfache Stream-Verarbeitung im Vordergrund stehen.
+Netty QUIC eignet sich besonders für Anwendungen, die bereits im Netty-Ökosystem umgesetzt sind oder zukünftig darauf aufbauen sollen.
+Quiche4J richtet sich hingegen an Szenarien, in denen Kontrolle über den QUIC-Datenfluss erforderlich ist oder bereits eigene UDP-Datagramm- und Eventloop-Implementierungen vorhanden sind.
+
+\subsection{QUIC}
+
+QUIC ist ein modernes Transportprotokoll, das die grundlegenden Eigenschaften von TCP übernimmt und diese um zusätzliche Mechanismen erweitert.
+Durch die Realisierung auf Basis von UDP kann QUIC ohne Anpassungen an bestehender Netzwerkinfrastruktur eingesetzt werden, da weder Router noch Endgeräte auf Kernel- oder Hardwareebene verändert werden müssen.
+
+Ein zentrales Merkmal von QUIC ist die Implementierung im User Space.
+Dadurch lassen sich neue Protokollfunktionen schneller entwickeln und ausrollen als bei klassischen Kernel-basierten Transportprotokollen.
+Beispiele hierfür sind das native Stream-Multiplexing ohne Head-of-Line-Blocking sowie die enge Kopplung von Transport- und Sicherheitsmechanismen, wodurch Verschlüsselung nicht als zusätzlicher Layer, sondern als integraler Bestandteil des Protokolls umgesetzt wird.
+
+Insgesamt zeigt sich, dass QUIC viele Einschränkungen von TCP adressiert, ohne dessen Konzepte aufzugeben. 

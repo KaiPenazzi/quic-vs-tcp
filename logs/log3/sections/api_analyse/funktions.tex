@@ -1,0 +1,22 @@
+\subsection{State- und Event-Transparenz}
+
+Obwohl QUIC vollständig im Userspace implementiert ist, gewähren die betrachteten Java-Frameworks nur begrenzte Einblicke in den aktuellen internen Zustand einer Verbindung.
+Ein direkter Zugriff oder eine Manipulation der QUIC-State-Machine ist in der Regel nicht vorgesehen.
+Stattdessen ähneln sich die Frameworks in den Abstraktionen, die sie dem Entwickler zur Verfügung stellen.
+
+Alle drei Implementierungen stellen Objekte zur Repräsentation von Verbindungen und Streams bereit und ermöglichen es, über Callback-Mechanismen oder Event-Handler über den erfolgreichen Aufbau oder das Beenden einer Verbindung.
+Darüber hinaus bieten die Frameworks Zugriff auf Statistik-Objekte, die grundlegende Metriken zur Überwachung der Verbindung enthalten.
+
+Diese Statistiken umfassen typischerweise Informationen über gesendete und empfangene Daten beispielsweise:
+
+\begin{itemize}
+    \item empfangene Pakete
+    \item gesendete Pakete
+    \item verlorene Pakete
+    \item geschätzte Round-Trip-Time
+    \item aktuelles Congestion Window
+    \item geschätzte Übertragungsrate
+\end{itemize}
+
+Damit ermöglichen die Frameworks eine Beobachtung der Übertragungsqualität, ohne jedoch eine detaillierte Kontrolle über die internen Protokollzustände offenzulegen.
+Diese Designentscheidung vereinfacht die Nutzung der APIs, schränkt jedoch die Möglichkeiten für tiefgreifende Protokollmanipulationen ein.
