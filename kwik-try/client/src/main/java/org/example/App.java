@@ -3,49 +3,52 @@
  */
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.example.commands.SendOver;
+
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+
+@Command(name = "", subcommands = {})
 public class App {
     public static void main(String[] args) throws Exception {
         String url = "http://127.0.0.1:7000";
         MyConnectionHandler handler = new MyConnectionHandler();
-        handler.createConnection(url);
-        handler.createConnection(url);
 
-        String echo = handler.sendResponse(0, "get");
-        System.out.println(echo);
+        Scanner scanner = new Scanner(System.in);
+        CommandLine cmd = new CommandLine(new App());
+        cmd.addSubcommand("sendOver", new SendOver(handler));
 
-        echo = handler.sendResponse(1, "get");
-        System.out.println(echo);
+        System.out.println("Shell gestartet. Befehl: sendOver <id> <stream> <msg>");
 
-        echo = handler.sendResponse(0, "set 20");
-        System.out.println(echo);
+        while (true) {
+            System.out.print("> ");
+            String input = scanner.nextLine();
 
-        echo = handler.sendResponse(0, "get");
-        System.out.println(echo);
+            if (input.equals("exit"))
+                break;
 
-        echo = handler.sendResponse(1, "get");
-        System.out.println(echo);
+            String[] parsedArgs = splitArgs(input);
+            cmd.execute(parsedArgs);
+        }
+    }
 
-        Thread.sleep(2000);
-        handler.closeAll();
-        // MyQuicClient client = new MyQuicClient(url);
-        //
-        // client.connect();
-        // client.sendUnidirectional("idk ich send einfach");
-        // String echo = client.sendResponse("echo pls");
-        // System.out.println(echo);
-        //
-        // int stream_id = client.open_stream();
-        // client.send_msg_over(stream_id, "send over 1");
-        //
-        // Thread.sleep(2000);
-        //
-        // int stream_id2 = client.open_stream();
-        // client.send_msg_over(stream_id2, "send over 2");
-        //
-        // Thread.sleep(2000);
-        //
-        // client.send_msg_over(stream_id, "send over 1, 2");
-        //
-        // client.close();
+    // generiert by gemeni:
+    public static String[] splitArgs(String string) {
+        List<String> matchList = new ArrayList<String>();
+        Pattern regex = Pattern.compile("[^\\s\"]+|\"([^\"]*)\"");
+        Matcher regexMatcher = regex.matcher(string);
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null)
+                matchList.add(regexMatcher.group(1));
+            else
+                matchList.add(regexMatcher.group());
+        }
+        return matchList.toArray(new String[0]);
     }
 }

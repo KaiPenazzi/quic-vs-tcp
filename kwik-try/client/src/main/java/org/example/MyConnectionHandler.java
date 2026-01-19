@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyConnectionHandler {
-    private List<MyQuicClient> clients;
+    private List<MyConnection> clients;
 
     public MyConnectionHandler() {
-        this.clients = new ArrayList<MyQuicClient>();
+        this.clients = new ArrayList<MyConnection>();
     }
 
     public void createConnection(String url) throws Exception {
-        MyQuicClient client = new MyQuicClient(url);
+        MyConnection client = new MyConnection(url);
         client.connect();
         this.clients.add(client);
     }
@@ -20,12 +20,12 @@ public class MyConnectionHandler {
         return this.clients.get(connection_id).sendResponse(msg);
     }
 
-    public MyQuicClient getConnection(int connection_id) {
+    public MyConnection getConnection(int connection_id) {
         return this.clients.get(connection_id);
     }
 
     public void closeAll() {
-        for (MyQuicClient client : clients) {
+        for (MyConnection client : clients) {
             client.close();
         }
     }

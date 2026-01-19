@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     implementation("tech.kwik:kwik:0.10.8")
+    implementation("info.picocli:picocli:4.7.7")
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
 
