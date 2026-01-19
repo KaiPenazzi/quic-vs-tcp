@@ -6,7 +6,7 @@ package org.example;
 public class App {
     public static void main(String[] args) throws Exception {
         String url = "http://127.0.0.1:7000";
-        ClientHandler handler = new ClientHandler();
+        MyConnectionHandler handler = new MyConnectionHandler();
         handler.createConnection(url);
         handler.createConnection(url);
 

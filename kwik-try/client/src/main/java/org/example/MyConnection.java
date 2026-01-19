@@ -11,14 +11,14 @@ import java.util.List;
 import tech.kwik.core.QuicClientConnection;
 import tech.kwik.core.QuicStream;
 
-public class MyQuicClient {
+public class MyConnection {
 
     private final URI uri;
     private QuicClientConnection connection;
 
     private List<QuicStream> streams;
 
-    public MyQuicClient(String url) {
+    public MyConnection(String url) {
         this.uri = URI.create(url);
         System.out.println(this.uri.toString());
         streams = new ArrayList<QuicStream>();

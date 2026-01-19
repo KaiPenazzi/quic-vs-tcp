@@ -3,10 +3,10 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientHandler {
+public class MyConnectionHandler {
     private List<MyQuicClient> clients;
 
-    public ClientHandler() {
+    public MyConnectionHandler() {
         this.clients = new ArrayList<MyQuicClient>();
     }
 
