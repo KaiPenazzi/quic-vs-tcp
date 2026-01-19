@@ -16,10 +16,12 @@ import tech.kwik.core.server.ApplicationProtocolConnection;
 public class MyQuicConnection implements ApplicationProtocolConnection {
     private final QuicConnection quicConnection;
     private final Logger log;
+    private String ConnectionState;
 
     public MyQuicConnection(QuicConnection quicConnection, Logger logger) {
         this.quicConnection = quicConnection;
         this.log = logger;
+        this.ConnectionState = "";
     }
 
     @Override
@@ -53,17 +55,39 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
                 String msg = new String(buf, StandardCharsets.UTF_8);
                 log.info(this.hashCode() + ": server recv: " + msg);
 
-                try (OutputStream out = stream.getOutputStream()) {
-                    log.info("echo try");
-                    out.write(("echo: " + msg).getBytes());
-                    out.close();
-                } catch (Exception e) {
-                    log.error("could not send msg: ", e);
+                String[] parts = msg.split(" ");
+
+                switch (parts[0]) {
+                    case "get":
+                        this.send("state: " + this.ConnectionState, stream);
+                        break;
+
+                    case "set":
+                        try {
+                            this.ConnectionState = parts[1];
+                            this.send("state: " + this.ConnectionState, stream);
+                        } catch (IndexOutOfBoundsException e) {
+                            this.send("value is missing: 'set <value>' ", stream);
+                        }
+                        break;
+                    default:
+                        this.send("echo: " + msg, stream);
                 }
 
             } catch (Exception e) {
                 log.error("stream failed", e);
             }
         }
+
+    }
+
+    private void send(String msg, QuicStream stream) {
+        try (OutputStream out = stream.getOutputStream()) {
+            out.write(msg.getBytes());
+            out.close();
+        } catch (Exception e) {
+            log.error("could not send msg: ", e);
+        }
+
     }
 }

@@ -10,10 +10,19 @@ public class App {
         handler.createConnection(url);
         handler.createConnection(url);
 
-        String echo = handler.sendResponse(0, "idk first connection send");
+        String echo = handler.sendResponse(0, "get");
         System.out.println(echo);
 
-        echo = handler.sendResponse(1, "idk sec connection send");
+        echo = handler.sendResponse(1, "get");
+        System.out.println(echo);
+
+        echo = handler.sendResponse(0, "set 20");
+        System.out.println(echo);
+
+        echo = handler.sendResponse(0, "get");
+        System.out.println(echo);
+
+        echo = handler.sendResponse(1, "get");
         System.out.println(echo);
 
         Thread.sleep(2000);
