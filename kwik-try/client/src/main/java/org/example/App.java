@@ -6,25 +6,37 @@ package org.example;
 public class App {
     public static void main(String[] args) throws Exception {
         String url = "http://127.0.0.1:7000";
-        MyQuicClient client = new MyQuicClient(url);
+        ClientHandler handler = new ClientHandler();
+        handler.createConnection(url);
+        handler.createConnection(url);
 
-        client.connect();
-        client.sendUnidirectional("idk ich send einfach");
-        String echo = client.sendResponse("echo pls");
+        String echo = handler.sendResponse(0, "idk first connection send");
         System.out.println(echo);
 
-        int stream_id = client.open_stream();
-        client.send_msg_over(stream_id, "send over 1");
+        echo = handler.sendResponse(1, "idk sec connection send");
+        System.out.println(echo);
 
         Thread.sleep(2000);
-
-        int stream_id2 = client.open_stream();
-        client.send_msg_over(stream_id2, "send over 2");
-
-        Thread.sleep(2000);
-
-        client.send_msg_over(stream_id, "send over 1, 2");
-
-        client.close();
+        handler.closeAll();
+        // MyQuicClient client = new MyQuicClient(url);
+        //
+        // client.connect();
+        // client.sendUnidirectional("idk ich send einfach");
+        // String echo = client.sendResponse("echo pls");
+        // System.out.println(echo);
+        //
+        // int stream_id = client.open_stream();
+        // client.send_msg_over(stream_id, "send over 1");
+        //
+        // Thread.sleep(2000);
+        //
+        // int stream_id2 = client.open_stream();
+        // client.send_msg_over(stream_id2, "send over 2");
+        //
+        // Thread.sleep(2000);
+        //
+        // client.send_msg_over(stream_id, "send over 1, 2");
+        //
+        // client.close();
     }
 }
