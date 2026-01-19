@@ -20,6 +20,10 @@ public class ClientHandler {
         return this.clients.get(connection_id).sendResponse(msg);
     }
 
+    public MyQuicClient getConnection(int connection_id) {
+        return this.clients.get(connection_id);
+    }
+
     public void closeAll() {
         for (MyQuicClient client : clients) {
             client.close();
