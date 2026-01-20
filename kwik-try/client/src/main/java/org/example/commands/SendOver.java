@@ -24,6 +24,6 @@ public class SendOver implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("connection_id: " + connection_id + "stream_id: " + stream_id + " msg: " + msg);
+        this.handler.getConnection(this.connection_id).send_msg_over(this.stream_id, this.msg);
     }
 }

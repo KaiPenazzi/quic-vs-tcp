@@ -41,7 +41,7 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
                         continue;
 
                     String msg = new String(buf, 0, len, StandardCharsets.UTF_8);
-                    log.info(this.hashCode() + ": server recv: " + msg);
+                    log.info(this.hashCode() + ": stream ID: " + stream.getStreamId() + ": " + msg);
                 }
 
             } catch (Exception e) {
@@ -53,7 +53,7 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
 
                 byte[] buf = in.readAllBytes();
                 String msg = new String(buf, StandardCharsets.UTF_8);
-                log.info(this.hashCode() + ": server recv: " + msg);
+                log.info(this.hashCode() + ": stream ID: " + stream.getStreamId() + ": " + msg);
 
                 String[] parts = msg.split(" ");
 

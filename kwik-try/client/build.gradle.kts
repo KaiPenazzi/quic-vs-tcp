@@ -6,12 +6,14 @@
  */
 
 plugins {
-    // Apply the application plugin to add support for building a CLI application in Java.
     application
+    //id("com.github.johnrengelman.shadow") version "8.1.1"
+    //id("io.github.goooler.shadow") version "8.1.7"
+    id("io.github.goooler.shadow") version "8.1.8"
+    // id("com.github.johnrengelman.shadow") version "7.1.0"
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
@@ -27,7 +29,6 @@ dependencies {
     implementation(libs.guava)
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -35,11 +36,19 @@ java {
 }
 
 application {
-    // Define the main class for the application.
     mainClass = "org.example.App"
 }
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+tasks.shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes(
+            "Main-Class" to "org.example.App"
+        )
+    }
 }

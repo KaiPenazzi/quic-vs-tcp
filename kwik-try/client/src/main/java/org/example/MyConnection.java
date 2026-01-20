@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,7 @@ public class MyConnection {
     private List<QuicStream> streams;
 
     public MyConnection(String url) {
-        this.uri = URI.create(url);
-        System.out.println(this.uri.toString());
+        this.uri = URI.create("quic://" + url);
         streams = new ArrayList<QuicStream>();
     }
 
@@ -29,6 +29,7 @@ public class MyConnection {
                 .noServerCertificateCheck()
                 .uri(this.uri)
                 .applicationProtocol("quic")
+                .maxIdleTimeout(Duration.ofMinutes(5))
                 .build();
 
         connection.connect();

@@ -9,7 +9,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.example.commands.Connect;
+import org.example.commands.GetState;
+import org.example.commands.OpenStream;
 import org.example.commands.SendOver;
+import org.example.commands.SetState;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -23,6 +27,10 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         CommandLine cmd = new CommandLine(new App());
         cmd.addSubcommand("sendOver", new SendOver(handler));
+        cmd.addSubcommand("connect", new Connect(handler));
+        cmd.addSubcommand("openStream", new OpenStream(handler));
+        cmd.addSubcommand("getState", new GetState(handler));
+        cmd.addSubcommand("setState", new SetState(handler));
 
         System.out.println("Shell gestartet. Befehl: sendOver <id> <stream> <msg>");
 
@@ -36,6 +44,8 @@ public class App {
             String[] parsedArgs = splitArgs(input);
             cmd.execute(parsedArgs);
         }
+
+        handler.closeAll();
     }
 
     // generiert by gemeni:
