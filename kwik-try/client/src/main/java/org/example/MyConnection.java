@@ -11,6 +11,7 @@ import java.util.List;
 
 import tech.kwik.core.QuicClientConnection;
 import tech.kwik.core.QuicStream;
+import tech.kwik.core.QuicConstants.TransportErrorCode;
 
 public class MyConnection {
 
@@ -94,6 +95,17 @@ public class MyConnection {
         for (int i = 0; i < this.streams.size(); i++) {
             this.close_stream(i);
         }
-        this.connection.close();
+        this.connection.close(187, "18Ziebelbande");
+    }
+
+    public void close(long errorCode, String msg) {
+        for (int i = 0; i < this.streams.size(); i++) {
+            this.close_stream(i);
+        }
+        this.connection.close(errorCode, msg);
+    }
+
+    public String getStats() {
+        return this.connection.getStats().toString();
     }
 }

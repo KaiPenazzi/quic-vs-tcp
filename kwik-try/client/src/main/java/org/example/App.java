@@ -9,11 +9,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.example.commands.CloseStream;
 import org.example.commands.Connect;
+import org.example.commands.Disconnect;
 import org.example.commands.GetState;
 import org.example.commands.OpenStream;
 import org.example.commands.SendOver;
 import org.example.commands.SetState;
+import org.example.commands.Stats;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -21,16 +24,19 @@ import picocli.CommandLine.Command;
 @Command(name = "", subcommands = {})
 public class App {
     public static void main(String[] args) throws Exception {
-        String url = "http://127.0.0.1:7000";
         MyConnectionHandler handler = new MyConnectionHandler();
 
         Scanner scanner = new Scanner(System.in);
+
         CommandLine cmd = new CommandLine(new App());
-        cmd.addSubcommand("sendOver", new SendOver(handler));
         cmd.addSubcommand("connect", new Connect(handler));
+        cmd.addSubcommand("disconnect", new Disconnect(handler));
         cmd.addSubcommand("openStream", new OpenStream(handler));
+        cmd.addSubcommand("closeStream", new CloseStream(handler));
+        cmd.addSubcommand("sendOver", new SendOver(handler));
         cmd.addSubcommand("getState", new GetState(handler));
         cmd.addSubcommand("setState", new SetState(handler));
+        cmd.addSubcommand("stats", new Stats(handler));
 
         System.out.println("Shell gestartet. Befehl: sendOver <id> <stream> <msg>");
 

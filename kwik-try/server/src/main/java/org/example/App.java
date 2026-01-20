@@ -5,18 +5,13 @@ package org.example;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 
 import tech.kwik.core.QuicConnection;
-import tech.kwik.core.QuicConnection.QuicVersion;
-import tech.kwik.core.log.FileLogger;
 import tech.kwik.core.log.Logger;
 import tech.kwik.core.log.SysOutLogger;
-import tech.kwik.core.server.ApplicationProtocolConnection;
-import tech.kwik.core.server.ApplicationProtocolConnectionFactory;
 import tech.kwik.core.server.ServerConnectionConfig;
 import tech.kwik.core.server.ServerConnector;
 

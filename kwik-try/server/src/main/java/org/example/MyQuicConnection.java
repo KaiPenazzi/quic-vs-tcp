@@ -20,6 +20,7 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
 
     public MyQuicConnection(QuicConnection quicConnection, Logger logger) {
         this.quicConnection = quicConnection;
+        this.quicConnection.setConnectionListener(new MyConnectionListener(logger));
         this.log = logger;
         this.ConnectionState = "";
     }
