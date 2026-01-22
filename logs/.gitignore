@@ -7,3 +7,8 @@
 *.bbl
 *.blg
 *.toc
+*.run.xml
+*.bcf
+*.nav
+*.snm
+*.vrb

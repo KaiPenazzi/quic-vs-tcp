@@ -1,0 +1,38 @@
+\section{QUIC}
+\begin{frame}[fragile]{Was ist QUIC?}
+    QUIC will alles können was TCP kann nur besser
+\end{frame}
+
+\begin{frame}[fragile]{Was macht TCP aus?}
+    \begin{itemize}
+        \item Verbindungsorientiert
+        \item Zuverlässige Übertragung
+        \item Geordnete Zustellung
+        \item Flusskontrolle
+        \item Fehlerkontrolle
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Grundlagen}
+    \begin{itemize}
+        \item Basiert auf UDP
+        \item Stream Orientiert
+        \item im Userspace
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Paket}
+    \begin{itemize}
+        \item Packet: \cite{alawaji_ietf_nodate} \\
+            \includegraphics[width=0.8\textwidth]{pictures/quic_packet.png}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Header}
+    \begin{itemize}
+        \item Longheader: \cite{alawaji_ietf_nodate}
+            \includegraphics[width=0.8\textwidth]{pictures/quic_header_long.png}
+        \item Shortheader: \cite{alawaji_ietf_nodate}
+            \includegraphics[width=0.8\textwidth]{pictures/quic_header_short.png}
+    \end{itemize}
+\end{frame}

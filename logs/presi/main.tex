@@ -1,0 +1,25 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{graphicx}
+\usetheme{metropolis}
+
+\title{QUIC in Java}
+\author{Kai Penazzi}
+\institute{HS-Offenburg}
+
+\begin{document}
+\maketitle
+
+\begin{frame}{Inhaltsverzeichnis}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\input{sections/quic.tex}
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{lib}
+\end{document}
