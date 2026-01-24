@@ -1,9 +1,11 @@
 \section{QUIC}
-\begin{frame}[fragile]{Was ist QUIC?}
+\begin{frame}{Was ist QUIC?}
     QUIC will alles können was TCP kann nur besser
 \end{frame}
 
-\begin{frame}[fragile]{Was macht TCP aus?}
+\subsection{Architektur}
+
+\begin{frame}{Was macht TCP aus?}
     \begin{itemize}
         \item Verbindungsorientiert
         \item Zuverlässige Übertragung
@@ -13,26 +15,179 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Grundlagen}
+\begin{frame}{Grundlagen}
     \begin{itemize}
         \item Basiert auf UDP
         \item Stream Orientiert
         \item im Userspace
     \end{itemize}
+    \includegraphics[width=0.8\textwidth]{pictures/quic_connection.png} \cite{kumar_quic_2020}
 \end{frame}
 
-\begin{frame}[fragile]{Paket}
+\begin{frame}{Paket}
     \begin{itemize}
         \item Packet: \cite{alawaji_ietf_nodate} \\
             \includegraphics[width=0.8\textwidth]{pictures/quic_packet.png}
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Header}
+\begin{frame}{Header}
     \begin{itemize}
         \item Longheader: \cite{alawaji_ietf_nodate}
             \includegraphics[width=0.8\textwidth]{pictures/quic_header_long.png}
         \item Shortheader: \cite{alawaji_ietf_nodate}
             \includegraphics[width=0.8\textwidth]{pictures/quic_header_short.png}
+        \item Header typ: \cite{alawaji_ietf_nodate}
+            \includegraphics[width=0.8\textwidth]{pictures/table_header_types.png}
+    \end{itemize}
+\end{frame}
+
+\subsection{Verbindung}
+
+\begin{frame}{Verbindungsaufbau}
+    \begin{figure}[h]
+    \centering
+        \begin{minipage}{0.48\textwidth}
+            \centering
+            \include{sections/TCP_TLS_connection}
+            \caption{TCP + TLS}
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.48\textwidth}
+            \centering
+            \include{sections/quic_connection}
+            \caption{QUIC}
+        \end{minipage}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Flusskontrolle}
+    \textbf{TCP:}
+    \begin{itemize}
+        \item Algorithmen wie NewReno oder CUBIC
+        \item Überwacht die Menge an unbestätigten Paketen
+        \item Bremst das Senden neuer Pakete bei Paketverlusten
+    \end{itemize}
+
+    \vspace{0.3cm}
+    \textbf{QUIC:}
+    \begin{itemize}
+        \item Übernimmt die Grundprinzipien von TCP
+        \item Verfolgt die Übertragung auf Ebene der Bytes-in-Flight
+        \item Feinkörnigere Kontrolle der Daten
+    \end{itemize}
+\end{frame}
+
+\subsection{Fehlerbehandlung}
+
+\begin{frame}{Packet- und Datenzuordnung}
+    \textbf{TCP:}
+    \begin{itemize}
+        \item Pakete mit denselben Daten teilen sich die gleiche Sequenznummer
+        \item ACKs beziehen sich auf Sequenznummern, nicht direkt auf einzelne Pakete
+    \end{itemize}
+
+    \vspace{0.3cm}
+    \textbf{QUIC:}
+    \begin{itemize}
+        \item Jedes Paket erhält eine neue Sequenznummer 
+        \item Zur eindeutigen Identifikation der Daten innerhalb eines Streams werden zusätzlich Stream-ID und Stream-Offset verwendet.
+        \item Ermöglicht exakte Nachverfolgung von bestätigten und verlorenen Paketen
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ack-Zurücknehmen}
+    \begin{itemize}
+        \item Bereits bestätigte Pakete können nicht zurückgenommen werden
+        \item Vereinfachte Verlustbehandlung auf Sender- und Empfängerseite
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Ack-Ranges}
+    \begin{itemize}
+        \item Mehrere ACK-Ranges in einem Paket möglich
+        \item Schnellere Paketverlust-Erkennung
+        \item Reduziert unnötige Retransmissions, besonders bei Netzwerken mit hohem Paketverlust
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Korrektur für verzögerte ACKs}
+    \begin{itemize}
+        \item ACKs kodieren die Verzögerung zwischen Paketeingang und ACK-Versand
+        \item Ermöglicht genauere RTT-Schätzungen beim Empfänger
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Fehlererkennung}
+        \textbf{TCP:} Prüfsumme auf Paketebene zur Sicherstellung von Header- und Datenintegrität \\
+        \vspace{0.3cm}
+        \textbf{QUIC:} 
+            \begin{itemize}
+                \item Integrierte TLS-1.3-Verschlüsselung für Integrität und Manipulationsschutz
+                \item Jedes Paket enthält einen Authentifizierungs-Tag zur Erkennung von Änderungen
+                \item Ersetzt klassische Prüfsumme durch kryptografisch gesicherte Integrität
+            \end{itemize}
+        \textbf{Forward Error Correction:} Standardmäßig nicht vorhanden, aber einfacher nachrüstbar dank Userspace-Implementierung
+\end{frame}
+
+\subsection{Features}
+
+\begin{frame}{Head-of-Line Blocking}
+    \textbf{Problem bei TCP:} 
+        \begin{itemize}
+            \item HTTP baut oft mehrere parallele TCP-Verbindungen auf
+            \item Verzögerungen oder Paketverluste in einer Verbindung blockieren Daten in anderen Verbindungen
+        \end{itemize}
+
+    \vspace{0.3cm}
+    \textbf{QUIC-Lösung:}
+        \begin{itemize}
+            \item Mehrere unabhängige Streams über eine einzige Verbindung
+            \item Effektive Vermeidung von Head-of-Line Blocking, schnellerer und effizienterer Datenfluss
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Connection Migration}
+    QUIC unterstützt \textbf{Connection Migration}:
+    \begin{itemize}
+        \item Verbindung bleibt bestehen, selbst wenn sich IP-Adresse des Clients ändert
+    \end{itemize}
+    \vspace{0.3cm}
+    Bei TCP würde die Verbindung abbrechen und neu aufgebaut werden müssen\\
+    \vspace{0.3cm}
+    QUIC ermöglicht dies durch:
+    \begin{itemize}
+        \item Übertragung über UDP
+        \item Eindeutige Identifizierung der Verbindung durch die \textbf{Connection ID} im Header
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{0-RTT}
+    \begin{itemize}
+        \item QUIC unterstützt \textbf{0-RTT}:
+        \begin{itemize}
+            \item Ermöglicht, dass der Client beim Wiederaufbau einer Verbindung sofort Daten senden kann
+            \item Der vollständige Handshake muss nicht erneut durchlaufen werden
+        \end{itemize}
+        \item Verwendung eines speziellen \textbf{0-RTT Long Headers}:
+        \begin{itemize}
+            \item Identifiziert die Verbindung eindeutig über die Connection-ID
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Verschlüsselung}
+    \begin{itemize}
+        \item QUIC implementiert \textbf{TLS 1.3} direkt im Protokoll
+        \item Daten werden verschlüsselt und vor Manipulation geschützt
+        \item Ein zusätzlicher Verschlüsselungslayer ist nicht erforderlich
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{User-Space Implementierung}
+    \begin{itemize}
+        \item QUIC wird vollständig im \textbf{Userspace} implementiert
+        \item Erweiterungen, Updates oder experimentelle Features lassen sich einfacher umsetzen
+        \item Kein Eingriff in den Kernel oder bestehende Netzwerk-Stacks notwendig
     \end{itemize}
 \end{frame}

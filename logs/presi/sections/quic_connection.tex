@@ -1,0 +1,32 @@
+
+\begin{tikzpicture}[
+    scale=0.8,
+    transform shape,
+    node distance=1.2cm,
+    every node/.style={font=\small},
+    arrow/.style={->, thick},
+    lifeline/.style={thick, gray}
+]
+
+\node (client) {Client};
+\node[right=3cm of client] (server) {Server};
+
+\node[below=0.5cm of client] (c1) {};
+\node[below=0.5cm of server] (s1) {};
+
+\draw[arrow] (c1) -- node[above]{Initial} (s1);
+
+\node[below=0.8cm of c1] (c2) {};
+\node[below=0.8cm of s1] (s2) {};
+
+\draw[arrow] (s2) -- node[above]{Initial + Handshake} (c2);
+
+\node[below=0.8cm of c2] (c3) {};
+\node[below=0.8cm of s2] (s3) {};
+
+\draw[arrow] (c3) -- node[above]{Client Finished} (s3);
+
+\draw[lifeline] (client.south) -- (c3.north);
+\draw[lifeline] (server.south) -- (s3.north);
+
+\end{tikzpicture}
