@@ -1,0 +1,183 @@
+\section{Java-Frameworks}
+
+\begin{frame}{Analyse von Java-QUIC-Frameworks}
+    Betrachtete Open-Source-Implementierungen für Java:
+    \begin{itemize}
+        \item Kwik
+        \item Quiche4J
+    \end{itemize}
+    Ziel der Analyse:
+    \begin{itemize}
+        \item Abstraktionsgrad der APIs vergleichen
+        \item Integrationsaufwand bewerten
+        \item Einsatzszenarien ableiten, für die jedes Framework besonders geeignet ist
+    \end{itemize}
+\end{frame}
+
+\subsection{Kwik Client}
+\begin{frame}[fragile]{Connection}
+    \scriptsize
+    \begin{verbatim}
+String applicationProtocolId = "....";
+QuicClientConnection connection = QuicClientConnection.newBuilder()
+    .uri(URI.create("http://127.0.0.1:7000"))
+    .applicationProtocol(applicationProtocolId)
+    .build();
+
+connection.connect();
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Stream-Management}
+    \scriptsize
+    \begin{verbatim}
+QuicStream quicStream = connection.createStream(true);
+OutputStream output = quicStream.getOutputStream();
+output.write(...)
+output.close();
+InputStream input = quicStream.getInputStream();
+input.read(...)
+    \end{verbatim}
+\end{frame}
+
+\subsection{Quiche4j Client}
+\begin{frame}[fragile]{Connection}
+    \scriptsize
+    \begin{verbatim}
+final Config config = new ConfigBuilder(Quiche.PROTOCOL_VERSION).build();
+final byte[] connId = Quiche.newConnectionId();
+final Connection conn = Quiche.connect("127.0.0.1:7000", connId, config);
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Receive-Loop}
+    \scriptsize
+    \begin{verbatim}
+final byte[] buf = new byte[1350];
+while(true) {
+    DatagramPacket packet = new DatagramPacket(buf, buf.length);
+    socket.receive(packet);
+    final byte[] buffer = Arrays.copyOfRange(
+    packet.getData(), packet.getOffset(), packet.getLength());
+    final int read = conn.recv(buffer);
+    if(read <= 0) break;
+}
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Send-Loop}
+    \scriptsize
+    \begin{verbatim}
+final byte[] buf = new byte[1350];
+while(true) {
+    DatagramPacket packet = new DatagramPacket(buf, buf.length);
+    socket.receive(packet);
+    final byte[] buffer = Arrays.copyOfRange(
+    packet.getData(), packet.getOffset(), packet.getLength());
+    final int read = conn.recv(buffer);
+    if(read <= 0) break;
+}
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Write and Read}
+    \scriptsize
+    \begin{verbatim}
+if(conn.isEstablished()) {
+    conn.streamSend(0, "hello".getBytes(), true);
+}
+
+if(conn.isEstablished()) {
+    final byte[] buf = new byte[1350];
+        for(long streamId : conn.readable()) {
+        while(true) {
+        final int len = conn.streamRecv(streamId, buf);
+        if(len <= 0) break;
+            // do stuff
+        }
+    }
+}
+    \end{verbatim}
+\end{frame}
+
+\subsection{Kwik Server}
+
+\begin{frame}[fragile]{QuicFactory}
+    \scriptsize
+    \begin{verbatim}
+public class MyQuicFactory implements ApplicationProtocolConnectionFactory {
+    @Override
+        public ApplicationProtocolConnection createConnection(
+            String protocol,
+            QuicConnection quicConnection) {
+        return new MyQuicConnection(quicConnection);
+    }
+}
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{ApplicationProtocolConnection}
+    \scriptsize
+    \begin{verbatim}
+public class MyQuicConnection implements ApplicationProtocolConnection {
+    private final QuicConnection quicConnection;
+
+    public MyQuicConnection(QuicConnection quicConnection) {
+        this.quicConnection = quicConnection;
+    }
+
+    @Override
+    public void acceptPeerInitiatedStream(QuicStream stream) {
+        // do stuff with stream
+    }
+}
+    \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Start}
+    \scriptsize
+    \begin{verbatim}
+KeyStore keystore = KeyStore.getInstance("PKCS12");
+try (FileInputStream keystoreStream = new FileInputStream(new File(KEYSTORE_PATH)
+    .getAbsolutePath())) {
+    keystore.load(keystoreStream, KEYSTORE_PASSWORD.toCharArray());
+}
+Logger log = new SysOutLogger();
+List<QuicConnection.QuicVersion> supportedVersions = new ArrayList<>();
+supportedVersions.add(QuicConnection.QuicVersion.V2);
+ServerConnectionConfig config = ServerConnectionConfig.builder()
+    .build();
+ServerConnector connector = ServerConnector.builder()
+    .withPort(7000)
+    .withSupportedVersions(supportedVersions)
+    .withKeyStore(keystore, KEY_ALIAS, KEYSTORE_PASSWORD.toCharArray())
+    .withConfiguration(config)
+    .withLogger(log)
+    .build();
+connector.registerApplicationProtocol("quic", new MyQuicFactory(log));
+connector.start();
+    \end{verbatim}
+\end{frame}
+
+\subsection{Quiche4j Server}
+
+\begin{frame}[fragile]{Connection}
+   \scriptsize 
+   \begin{verbatim}
+final Config config = new ConfigBuilder(Quiche.PROTOCOL_VERSION).build();
+final byte[] connId = Quiche.newConnectionId();
+final Connection conn = Quiche.accept(sourceConnId, originalDestinationId, config);
+   \end{verbatim}
+\end{frame}
+
+\begin{frame}{State- und Event-Transparenz}
+    Typische Metriken in den Statistiken:
+    \begin{itemize}
+        \item Anzahl empfangener Pakete
+        \item Anzahl gesendeter Pakete
+        \item Anzahl verlorener Pakete
+        \item Geschätzte Round-Trip-Time (RTT)
+        \item Aktuelles Congestion Window
+        \item Geschätzte Übertragungsrate
+    \end{itemize}
+\end{frame}

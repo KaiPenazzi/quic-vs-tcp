@@ -1,0 +1,36 @@
+\section{Fazit}
+
+\begin{frame}{Vergleich}
+    \textbf{Kwik:}
+    \begin{itemize}
+        \item High-Level-API: Handshake, Socket-Management, Stream-Verwaltung automatisch
+        \item Ideal für schnelle Implementierungen ohne tiefe Netzwerkkenntnisse
+    \end{itemize}
+    \textbf{Quiche / Quiche4J:}
+    \begin{itemize}
+        \item Nur die QUIC-State-Machine wird bereitgestellt
+        \item Entwickler muss UDP-Socket und Eventloop selbst implementieren
+        \item Maximale Flexibilität, aber hoher Implementierungsaufwand
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{QUIC}
+\begin{itemize}
+    \item TCP-Grundprinzipien werden übernommen
+    \item Aufbau auf UDP:
+    \begin{itemize}
+        \item Keine Anpassungen an Router oder Endgeräte nötig
+        \item Funktioniert ohne Kernel-/Hardwareänderungen
+    \end{itemize}
+    \item User-Space-Implementierung:
+    \begin{itemize}
+        \item Schnellere Entwicklung und Rollout neuer Protokollfunktionen
+    \end{itemize}
+    \item Features:
+    \begin{itemize}
+        \item Stream-Multiplexing
+        \item Integrierte Verschlüsselung
+    \end{itemize}
+\end{itemize}
+\end{frame}
