@@ -5,7 +5,7 @@ import org.example.MyConnectionHandler;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "getGState", description = "bekomme global state")
+@Command(name = "getGState", description = "get global state")
 public class GetGlobalState implements Runnable {
     private final MyConnectionHandler handler;
 

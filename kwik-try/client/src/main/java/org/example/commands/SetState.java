@@ -5,7 +5,7 @@ import org.example.MyConnectionHandler;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "setState", description = "setze connection state")
+@Command(name = "setState", description = "set connection state")
 public class SetState implements Runnable {
     private final MyConnectionHandler handler;
 
