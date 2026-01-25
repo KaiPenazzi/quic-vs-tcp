@@ -7,9 +7,11 @@ import tech.kwik.core.server.ApplicationProtocolConnectionFactory;
 
 public class MyQuicFactory implements ApplicationProtocolConnectionFactory {
     private final Logger log;
+    private MyGlobelState globelState;
 
     MyQuicFactory(Logger logger) {
         this.log = logger;
+        this.globelState = new MyGlobelState();
     }
 
     @Override
@@ -24,6 +26,6 @@ public class MyQuicFactory implements ApplicationProtocolConnectionFactory {
 
     @Override
     public ApplicationProtocolConnection createConnection(String protocol, QuicConnection quicConnection) {
-        return new MyQuicConnection(quicConnection, this.log);
+        return new MyQuicConnection(quicConnection, this.log, this.globelState);
     }
 }

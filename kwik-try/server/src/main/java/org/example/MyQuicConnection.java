@@ -1,8 +1,5 @@
 package org.example;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -17,12 +14,14 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
     private final QuicConnection quicConnection;
     private final Logger log;
     private String ConnectionState;
+    private MyGlobelState globelState;
 
-    public MyQuicConnection(QuicConnection quicConnection, Logger logger) {
+    public MyQuicConnection(QuicConnection quicConnection, Logger logger, MyGlobelState state) {
         this.quicConnection = quicConnection;
         this.quicConnection.setConnectionListener(new MyConnectionListener(logger));
         this.log = logger;
         this.ConnectionState = "";
+        this.globelState = state;
     }
 
     @Override
@@ -69,6 +68,18 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
                             this.send("state: " + this.ConnectionState, stream);
                         } catch (IndexOutOfBoundsException e) {
                             this.send("value is missing: 'set <value>' ", stream);
+                        }
+                        break;
+                    case "gget":
+                        this.send("global state: " + this.globelState.state, stream);
+                        break;
+
+                    case "gset":
+                        try {
+                            this.globelState.state = parts[1];
+                            this.send("global state: " + this.globelState.state, stream);
+                        } catch (IndexOutOfBoundsException e) {
+                            this.send("value is missing: 'gset <value>' ", stream);
                         }
                         break;
                     default:

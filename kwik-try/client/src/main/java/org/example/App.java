@@ -12,9 +12,11 @@ import java.util.regex.Pattern;
 import org.example.commands.CloseStream;
 import org.example.commands.Connect;
 import org.example.commands.Disconnect;
+import org.example.commands.GetGlobalState;
 import org.example.commands.GetState;
 import org.example.commands.OpenStream;
 import org.example.commands.SendOver;
+import org.example.commands.SetGlobalState;
 import org.example.commands.SetState;
 import org.example.commands.Stats;
 
@@ -37,8 +39,8 @@ public class App {
         cmd.addSubcommand("getState", new GetState(handler));
         cmd.addSubcommand("setState", new SetState(handler));
         cmd.addSubcommand("stats", new Stats(handler));
-
-        System.out.println("Shell gestartet. Befehl: sendOver <id> <stream> <msg>");
+        cmd.addSubcommand("setGState", new SetGlobalState(handler));
+        cmd.addSubcommand("getGState", new GetGlobalState(handler));
 
         while (true) {
             System.out.print("> ");

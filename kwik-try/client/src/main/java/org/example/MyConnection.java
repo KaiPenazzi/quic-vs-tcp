@@ -37,7 +37,7 @@ public class MyConnection {
     }
 
     public String sendResponse(String msg) {
-        System.out.println("Send: " + msg);
+        // System.out.println("Send: " + msg);
         try {
             QuicStream stream = this.connection.createStream(true);
             OutputStream out = stream.getOutputStream();
@@ -47,13 +47,12 @@ public class MyConnection {
             byte[] buf = in.readAllBytes();
             return new String(buf, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            System.out.println("could not send Message: " + e.toString());
+            return "could not send Message: " + e.toString();
         }
-        return "";
     }
 
     public void sendUnidirectional(String msg) {
-        System.out.println("Send: " + msg);
+        // System.out.println("Send: " + msg);
         try {
             QuicStream stream = this.connection.createStream(false);
             OutputStream out = stream.getOutputStream();
@@ -95,7 +94,7 @@ public class MyConnection {
         for (int i = 0; i < this.streams.size(); i++) {
             this.close_stream(i);
         }
-        this.connection.close(187, "18Ziebelbande");
+        this.connection.close();
     }
 
     public void close(long errorCode, String msg) {
