@@ -5,12 +5,13 @@
     \begin{itemize}
         \item Kwik
         \item Quiche4J
+        \item (Netty-QUIC)
     \end{itemize}
     Ziel der Analyse:
     \begin{itemize}
         \item Abstraktionsgrad der APIs vergleichen
         \item Integrationsaufwand bewerten
-        \item Einsatzszenarien ableiten, für die jedes Framework besonders geeignet ist
+        \item Einsatzszenarien
     \end{itemize}
 \end{frame}
 
@@ -154,7 +155,7 @@ ServerConnector connector = ServerConnector.builder()
     .withConfiguration(config)
     .withLogger(log)
     .build();
-connector.registerApplicationProtocol("quic", new MyQuicFactory(log));
+connector.registerApplicationProtocol("quic", new MyQuicFactory());
 connector.start();
     \end{verbatim}
 \end{frame}

@@ -1,6 +1,6 @@
 \section{QUIC}
 \begin{frame}{Was ist QUIC?}
-    QUIC will alles können was TCP kann nur besser
+    QUIC will alles können was TCP kann, nur besser
 \end{frame}
 
 \subsection{Architektur}
@@ -91,7 +91,7 @@
     \textbf{QUIC:}
     \begin{itemize}
         \item Jedes Paket erhält eine neue Sequenznummer 
-        \item Zur eindeutigen Identifikation der Daten innerhalb eines Streams werden zusätzlich Stream-ID und Stream-Offset verwendet.
+        \item Daten werden über Stream-ID und Stream-Offset identifiziert
         \item Ermöglicht exakte Nachverfolgung von bestätigten und verlorenen Paketen
     \end{itemize}
 \end{frame}
@@ -148,7 +148,7 @@
 \end{frame}
 
 \begin{frame}{Connection Migration}
-    QUIC unterstützt \textbf{Connection Migration}:
+    QUIC unterstützt Connection Migration:
     \begin{itemize}
         \item Verbindung bleibt bestehen, selbst wenn sich IP-Adresse des Clients ändert
     \end{itemize}
@@ -186,7 +186,7 @@
 
 \begin{frame}{User-Space Implementierung}
     \begin{itemize}
-        \item QUIC wird vollständig im \textbf{Userspace} implementiert
+        \item QUIC wird vollständig im Userspace implementiert
         \item Erweiterungen, Updates oder experimentelle Features lassen sich einfacher umsetzen
         \item Kein Eingriff in den Kernel oder bestehende Netzwerk-Stacks notwendig
     \end{itemize}
