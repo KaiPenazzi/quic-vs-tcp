@@ -16,7 +16,7 @@
 \end{frame}
 
 \subsection{Kwik Client}
-\begin{frame}[fragile]{Connection}
+\begin{frame}[fragile]{Connection - Kwik}
     \scriptsize
     \begin{verbatim}
 String applicationProtocolId = "....";
@@ -29,7 +29,7 @@ connection.connect();
     \end{verbatim}
 \end{frame}
 
-\begin{frame}[fragile]{Stream-Management}
+\begin{frame}[fragile]{Stream-Management - Kwik}
     \scriptsize
     \begin{verbatim}
 QuicStream quicStream = connection.createStream(true);
@@ -42,7 +42,7 @@ input.read(...)
 \end{frame}
 
 \subsection{Quiche4j Client}
-\begin{frame}[fragile]{Connection}
+\begin{frame}[fragile]{Connection - Quiche4j}
     \scriptsize
     \begin{verbatim}
 final Config config = new ConfigBuilder(Quiche.PROTOCOL_VERSION).build();
@@ -51,7 +51,7 @@ final Connection conn = Quiche.connect("127.0.0.1:7000", connId, config);
     \end{verbatim}
 \end{frame}
 
-\begin{frame}[fragile]{Receive-Loop}
+\begin{frame}[fragile]{Receive-Loop - Quiche4j}
     \scriptsize
     \begin{verbatim}
 final byte[] buf = new byte[1350];
@@ -66,7 +66,7 @@ while(true) {
     \end{verbatim}
 \end{frame}
 
-\begin{frame}[fragile]{Send-Loop}
+\begin{frame}[fragile]{Send-Loop - Quiche4j}
     \scriptsize
     \begin{verbatim}
 final byte[] buf = new byte[1350];
@@ -81,7 +81,7 @@ while(true) {
     \end{verbatim}
 \end{frame}
 
-\begin{frame}[fragile]{Write and Read}
+\begin{frame}[fragile]{Write and Read - Quiche4j}
     \scriptsize
     \begin{verbatim}
 if(conn.isEstablished()) {
@@ -103,7 +103,7 @@ if(conn.isEstablished()) {
 
 \subsection{Kwik Server}
 
-\begin{frame}[fragile]{QuicFactory}
+\begin{frame}[fragile]{QuicFactory - Kwik}
     \scriptsize
     \begin{verbatim}
 public class MyQuicFactory implements ApplicationProtocolConnectionFactory {
@@ -117,7 +117,7 @@ public class MyQuicFactory implements ApplicationProtocolConnectionFactory {
     \end{verbatim}
 \end{frame}
 
-\begin{frame}[fragile]{ApplicationProtocolConnection}
+\begin{frame}[fragile]{ApplicationProtocolConnection - Kwik}
     \scriptsize
     \begin{verbatim}
 public class MyQuicConnection implements ApplicationProtocolConnection {
@@ -135,7 +135,7 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
     \end{verbatim}
 \end{frame}
 
-\begin{frame}[fragile]{Start}
+\begin{frame}[fragile]{Start - Kwik}
     \scriptsize
     \begin{verbatim}
 KeyStore keystore = KeyStore.getInstance("PKCS12");
@@ -145,7 +145,7 @@ try (FileInputStream keystoreStream = new FileInputStream(new File(KEYSTORE_PATH
 }
 Logger log = new SysOutLogger();
 List<QuicConnection.QuicVersion> supportedVersions = new ArrayList<>();
-supportedVersions.add(QuicConnection.QuicVersion.V2);
+supportedVersions.add(QuicConnection.QuicVersion.V1);
 ServerConnectionConfig config = ServerConnectionConfig.builder()
     .build();
 ServerConnector connector = ServerConnector.builder()
@@ -162,7 +162,7 @@ connector.start();
 
 \subsection{Quiche4j Server}
 
-\begin{frame}[fragile]{Connection}
+\begin{frame}[fragile]{Connection - Quiche4j}
    \scriptsize 
    \begin{verbatim}
 final Config config = new ConfigBuilder(Quiche.PROTOCOL_VERSION).build();
