@@ -4,7 +4,7 @@ req_extensions = v3_req
 prompt = no
 
 [dn]
-CN = cooler_server
+CN = kwik_server
 
 [v3_req]
 # Nur notwendig für Certificate Signing Requests (CSRs), aber wir lassen es drin
@@ -16,6 +16,5 @@ subjectAltName = @alt_names
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = cooler_server
 DNS.2 = localhost
 IP.1 = 127.0.0.1
