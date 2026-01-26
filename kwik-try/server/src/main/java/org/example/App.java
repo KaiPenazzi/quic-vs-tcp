@@ -37,13 +37,9 @@ public class App {
 
         List<QuicConnection.QuicVersion> supportedVersions = new ArrayList<>();
         supportedVersions.add(QuicConnection.QuicVersion.V1);
-        // supportedVersions.add(QuicConnection.QuicVersion.V2);
 
         ServerConnectionConfig config = ServerConnectionConfig.builder()
                 .maxIdleTimeoutInSeconds(5000)
-                // .maxUnidirectionalStreamBufferSize(1_000_000)
-                // .maxBidirectionalStreamBufferSize(1_000_000)
-                // .maxConnectionBufferSize(10_000_000)
                 .maxOpenPeerInitiatedUnidirectionalStreams(10)
                 .maxOpenPeerInitiatedBidirectionalStreams(100)
                 .retryRequired(true)
