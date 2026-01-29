@@ -16,7 +16,7 @@ import tech.kwik.core.server.ServerConnectionConfig;
 import tech.kwik.core.server.ServerConnector;
 
 public class App {
-    private static final String KEYSTORE_PATH = "../../keystore.p12";
+    private static final String KEYSTORE_PATH = "../keystore.p12";
     private static final String KEYSTORE_PASSWORD = "keystorepass";
     private static final String KEY_ALIAS = "kwikserver";
 
