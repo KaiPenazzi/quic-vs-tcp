@@ -1,0 +1,143 @@
+\subsection{MyQuicConnection}
+
+Die Klasse \texttt{MyQuicConnection} stellt die zentrale Verbindungskomponente des Servers dar. 
+Sie implementiert die Schnittstelle \texttt{ApplicationProtocolConnection} des Kwik-Frameworks und wird für jede eingehende QUIC-Verbindung instanziiert.
+
+Die Hauptaufgaben dieser Klasse sind:
+
+\begin{itemize}
+    \item Verwaltung des lokalen Verbindungszustands (\texttt{ConnectionState}) und Zugriff auf den globalen Zustand (\texttt{MyGlobalState}).
+    \item Akzeptieren von von Peers initiierten Streams über \texttt{acceptPeerInitiatedStream}.
+    \item Unterscheidung zwischen unidirektionalen und bidirektionalen Streams.
+    \item Verarbeitung von Nachrichten aus bidirektionalen Streams, inklusive Befehlen zur Zustandsabfrage oder -änderung:
+    \begin{itemize}
+        \item \texttt{get / set} für den lokalen Verbindungszustand
+        \item \texttt{gget / gset} für den globalen Zustand
+        \item Alle anderen Nachrichten werden einfach zurückgesendet (Echo)
+    \end{itemize}
+    \item Versand von Nachrichten über die bidirektionalen Streams.
+\end{itemize}
+
+Die Verarbeitung jedes Streams erfolgt in einem eigenen Thread, um parallele Kommunikation zu ermöglichen, was eine realistische Simulation einer Multi-Client-Umgebung erlaubt. 
+
+
+\subsection{MyQuicConnection}
+
+Die Klasse \texttt{MyQuicConnection} stellt die zentrale Verbindungskomponente des Servers dar. 
+Sie implementiert die Schnittstelle \texttt{ApplicationProtocolConnection} des Kwik-Frameworks und wird für jede eingehende QUIC-Verbindung instanziiert.
+Im Konstruktor wird ein \texttt{MyConnectionListener} gesetzt. Die \texttt{connected}-Methode des Listeners wird dabei allerdings nicht aufgerufen, da die Verbindung bereits vorher aufgebaut wurde.
+
+Die Hauptaufgaben dieser Klasse sind:
+
+\begin{itemize}
+    \item Verwaltung des lokalen Verbindungszustands (\texttt{ConnectionState}) und Zugriff auf den globalen Zustand (\texttt{MyGlobalState}).
+    \item Akzeptieren von von Peers initiierten Streams über \texttt{acceptPeerInitiatedStream}.
+    \item Unterscheidung zwischen unidirektionalen und bidirektionalen Streams.
+    \item Verarbeitung von Nachrichten aus bidirektionalen Streams, inklusive Befehlen zur Zustandsabfrage oder -änderung:
+    \begin{itemize}
+        \item \texttt{get / set} für den lokalen Verbindungszustand
+        \item \texttt{gget / gset} für den globalen Zustand
+        \item Alle anderen Nachrichten werden einfach zurückgesendet (Echo)
+    \end{itemize}
+    \item Versand von Nachrichten über die bidirektionalen Streams.
+\end{itemize}
+
+Die Verarbeitung jedes Streams erfolgt in einem eigenen Thread, um parallele Kommunikation zu ermöglichen.
+
+
+\begin{verbatim}
+public class MyQuicConnection implements ApplicationProtocolConnection {
+    private final QuicConnection quicConnection;
+    private final Logger log;
+    private String ConnectionState;
+    private MyGlobelState globelState;
+
+    public MyQuicConnection(QuicConnection quicConnection, Logger logger, MyGlobelState state) {
+        this.quicConnection = quicConnection;
+        this.quicConnection.setConnectionListener(new MyConnectionListener(logger));
+        this.log = logger;
+        this.ConnectionState = "";
+        this.globelState = state;
+    }
+
+    @Override
+    public void acceptPeerInitiatedStream(QuicStream stream) {
+        new Thread(() -> handleClient(stream)).start();
+    }
+
+    private void handleClient(QuicStream stream) {
+        if (stream.isUnidirectional()) {
+            try (InputStream in = stream.getInputStream()) {
+
+                byte[] buf = new byte[4096];
+                int len;
+
+                while ((len = in.read(buf)) != -1) {
+                    if (len == 0)
+                        continue;
+
+                    String msg = new String(buf, 0, len, StandardCharsets.UTF_8);
+                    log.info(this.hashCode() + ": stream ID: " + stream.getStreamId() + ": " + msg);
+                }
+
+            } catch (Exception e) {
+                log.error("stream failed", e);
+            }
+        }
+        if (stream.isBidirectional()) {
+            try (InputStream in = stream.getInputStream()) {
+
+                byte[] buf = in.readAllBytes();
+                String msg = new String(buf, StandardCharsets.UTF_8);
+                log.info(this.hashCode() + ": stream ID: " + stream.getStreamId() + ": " + msg);
+
+                String[] parts = msg.split(" ");
+
+                switch (parts[0]) {
+                    case "get":
+                        this.send("state: " + this.ConnectionState, stream);
+                        break;
+
+                    case "set":
+                        try {
+                            this.ConnectionState = parts[1];
+                            this.send("state: " + this.ConnectionState, stream);
+                        } catch (IndexOutOfBoundsException e) {
+                            this.send("value is missing: 'set <value>' ", stream);
+                        }
+                        break;
+                    case "gget":
+                        this.send("global state: " + this.globelState.getState(), stream);
+                        break;
+
+                    case "gset":
+                        try {
+                            this.globelState.setState(parts[1]);
+                            this.send("global state: " + this.globelState.getState(), stream);
+                        } catch (IndexOutOfBoundsException e) {
+                            this.send("value is missing: 'gset <value>' ", stream);
+                        }
+                        break;
+                    default:
+                        this.send("echo: " + msg, stream);
+                }
+
+            } catch (Exception e) {
+                log.error("stream failed", e);
+            }
+        }
+
+    }
+
+    private void send(String msg, QuicStream stream) {
+        try (OutputStream out = stream.getOutputStream()) {
+            out.write(msg.getBytes());
+            out.close();
+        } catch (Exception e) {
+            log.error("could not send msg: ", e);
+        }
+
+    }
+}
+\end{verbatim}
+

@@ -1,0 +1,24 @@
+\section{MyConnectionListener}
+
+\texttt{MyConnectionListener} implementiert die Schnittstelle \texttt{ConnectionListener} und überwacht wichtige Ereignisse der QUIC-Verbindung.
+Die Überwachung beschränkt sich dabei auf den Aufbau und die Beendigung der Verbindung, da das Interface keine weiteren Methoden bereitstellt.
+
+\begin{verbatim}
+public class MyConnectionListener implements ConnectionListener {
+    private Logger log;
+
+    public MyConnectionListener(Logger logger) {
+        this.log = logger;
+    }
+
+    @Override
+    public void connected(ConnectionEstablishedEvent event) {
+        log.info("connection established");
+    }
+
+    @Override
+    public void disconnected(ConnectionTerminatedEvent event) {
+        log.info("connection terminated: " + event.errorDescription());
+    }
+}
+\end{verbatim}

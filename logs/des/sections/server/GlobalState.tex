@@ -1,0 +1,19 @@
+\subsection{GlobalState}
+
+Für den Demonstrator wird ein globaler Zustand implementiert, der von allen aktiven QUIC-Verbindungen gemeinsam genutzt wird. 
+Dies simuliert in einer realen Anwendung eine einfache Persistenz, auf die mehrere Verbindungen zugreifen können. 
+In diesem Fall ist der globale Zustand nur ein einfacher String, der gelesen und geschrieben werden kann.
+
+\begin{verbatim}
+public class MyGlobelState {
+    private String state = "";
+
+    public String getState() {
+        return this.state;
+    }
+
+    public void setState(String newState) {
+        this.state = newState;
+    }
+}
+\end{verbatim}
