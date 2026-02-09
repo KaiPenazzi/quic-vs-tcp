@@ -1,9 +1,13 @@
 package org.example;
 
 public class MyGlobelState {
-    public String state;
+    private String state = "";
 
-    public MyGlobelState() {
-        this.state = "";
+    public String getState() {
+        return this.state;
+    }
+
+    public void setState(String newState) {
+        this.state = newState;
     }
 }

@@ -11,7 +11,6 @@ import java.util.List;
 
 import tech.kwik.core.QuicClientConnection;
 import tech.kwik.core.QuicStream;
-import tech.kwik.core.QuicConstants.TransportErrorCode;
 
 public class MyConnection {
 

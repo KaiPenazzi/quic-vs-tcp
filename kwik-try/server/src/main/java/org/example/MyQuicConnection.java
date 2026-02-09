@@ -71,13 +71,13 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
                         }
                         break;
                     case "gget":
-                        this.send("global state: " + this.globelState.state, stream);
+                        this.send("global state: " + this.globelState.getState(), stream);
                         break;
 
                     case "gset":
                         try {
-                            this.globelState.state = parts[1];
-                            this.send("global state: " + this.globelState.state, stream);
+                            this.globelState.setState(parts[1]);
+                            this.send("global state: " + this.globelState.getState(), stream);
                         } catch (IndexOutOfBoundsException e) {
                             this.send("value is missing: 'gset <value>' ", stream);
                         }
