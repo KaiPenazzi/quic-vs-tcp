@@ -4,11 +4,11 @@
 Obwohl der Client im Demonstrator keine Serverauthentifizierung durchführt, benötigt QUIC aufgrund der integrierten TLS~1.3-Verschlüsselung dennoch entsprechendes Schlüsselmaterial.
 Das folgende Bash-Skript wurde von ChatGPT erstellt und erzeugt das Schlüsselmaterial.
 
-\begin{verbatim}
+\begin{lstlisting}
 #!/bin/bash
 
 # Generiert von ChatGPT
-# 1️⃣ Erstelle ein Self-Signed Zertifikat mit SAN
+# Erstelle ein Self-Signed Zertifikat mit SAN
 openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
   -keyout server.key \
@@ -16,7 +16,7 @@ openssl req -x509 -nodes -days 365 \
   -subj "/CN=localhost" \
   -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 
-# 2️⃣ Exportiere in PKCS12-Keystore mit Alias 'kwikserver'
+# Exportiere in PKCS12-Keystore mit Alias 'kwikserver'
 openssl pkcs12 -export \
   -in server.crt \
   -inkey server.key \
@@ -24,12 +24,13 @@ openssl pkcs12 -export \
   -out keystore.p12 \
   -passout pass:keystorepass
 
-# 3️⃣ Optional: Prüfe Inhalt des Keystores
-echo "Folgende Einträge befinden sich im Keystore:"
+# Optional: Pruefe Inhalt des Keystores
+echo "Folgende Eintraege befinden sich im Keystore:"
 keytool -list -keystore keystore.p12 -storetype PKCS12 -storepass keystorepass
-\end{verbatim}
+\end{lstlisting}
 
-\input{server/GlobalState.tex}
-\input{server/MyConnectionListener.tex}
-\input{server/MyQuicConnection.tex}
-
+\input{sections/server/GlobalState.tex}
+\input{sections/server/MyConnectionListener.tex}
+\input{sections/server/MyQuicConnection.tex}
+\input{sections/server/MyQuicFactory.tex}
+\input{sections/server/App.tex}

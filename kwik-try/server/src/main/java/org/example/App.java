@@ -16,15 +16,14 @@ import tech.kwik.core.server.ServerConnectionConfig;
 import tech.kwik.core.server.ServerConnector;
 
 public class App {
-    private static final String KEYSTORE_PATH = "../keystore.p12";
-    private static final String KEYSTORE_PASSWORD = "keystorepass";
-    private static final String KEY_ALIAS = "kwikserver";
-
     public static void main(String[] args) throws Exception {
+        String KEYSTORE_PATH = "../keystore.p12";
+        String KEYSTORE_PASSWORD = "keystorepass";
+        String KEY_ALIAS = "kwikserver";
+
         KeyStore keystore = KeyStore.getInstance("PKCS12");
 
         try (FileInputStream keystoreStream = new FileInputStream(new File(KEYSTORE_PATH).getAbsolutePath())) {
-
             keystore.load(keystoreStream, KEYSTORE_PASSWORD.toCharArray());
         }
 

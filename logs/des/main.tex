@@ -1,12 +1,21 @@
 \documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{ragged2e}
+\usepackage{listings}
 
 \AtBeginDocument{\RaggedRight}
 
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    breakatwhitespace=true
+}
+
 \begin{document}
 \input{sections/titlepage.tex}
+\tableofcontents
+\newpage
 \input{sections/einleitung.tex}
 \input{sections/architektur.tex}
-\input{sections/key.tex}
-\iend{document}
+\input{sections/server.tex}
+\end{document}

@@ -4,7 +4,7 @@ Für den Demonstrator wird ein globaler Zustand implementiert, der von allen akt
 Dies simuliert in einer realen Anwendung eine einfache Persistenz, auf die mehrere Verbindungen zugreifen können. 
 In diesem Fall ist der globale Zustand nur ein einfacher String, der gelesen und geschrieben werden kann.
 
-\begin{verbatim}
+\begin{lstlisting}
 public class MyGlobelState {
     private String state = "";
 
@@ -16,4 +16,4 @@ public class MyGlobelState {
         this.state = newState;
     }
 }
-\end{verbatim}
+\end{lstlisting}

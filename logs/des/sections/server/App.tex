@@ -1,0 +1,72 @@
+\subsection{App}
+
+Die Klasse \texttt{App} dient als Einstiegspunkt der Serveranwendung und übernimmt die Initialisierung des QUIC-Servers.
+
+Zu Beginn wird der zuvor erzeugte PKCS12-Keystore geladen.
+
+\begin{lstlisting}
+String KEYSTORE_PATH = "../keystore.p12";
+String KEYSTORE_PASSWORD = "keystorepass";
+String KEY_ALIAS = "kwikserver";
+
+KeyStore keystore = KeyStore.getInstance("PKCS12");
+
+try (FileInputStream keystoreStream = new FileInputStream(new File(KEYSTORE_PATH).getAbsolutePath())) {
+    keystore.load(keystoreStream, KEYSTORE_PASSWORD.toCharArray());
+}
+\end{lstlisting}
+
+Anschließend wird ein \texttt{Logger} konfiguriert, der Laufzeitinformationen wie Verbindungsereignisse, Stream-Daten und Warnungen ausgibt. Ohne einen Logger kann der Server nicht gestartet werden.
+
+\begin{lstlisting}
+Logger log = new SysOutLogger();
+
+log.timeFormat(Logger.TimeFormat.Long);
+log.logWarning(true);
+log.logInfo(true);
+log.logStream(true);
+\end{lstlisting}
+
+Die unterstützten QUIC-Versionen werden explizit festgelegt. In diesem Demonstrator wird QUIC Version~1 verwendet.
+
+\begin{lstlisting}
+List<QuicConnection.QuicVersion> supportedVersions = new ArrayList<>();
+supportedVersions.add(QuicConnection.QuicVersion.V1);
+\end{lstlisting}
+
+Über das \texttt{ServerConnectionConfig}-Objekt werden Verbindungsparameter konfiguriert, darunter Zeitlimits, maximale Stream-Anzahlen sowie die Verwendung von Retry-Paketen.
+
+\begin{lstlisting}
+ServerConnectionConfig config = ServerConnectionConfig.builder()
+        .maxIdleTimeoutInSeconds(5000)
+        .maxOpenPeerInitiatedUnidirectionalStreams(10)
+        .maxOpenPeerInitiatedBidirectionalStreams(100)
+        .retryRequired(true)
+        .connectionIdLength(8)
+        .build();
+\end{lstlisting}
+
+Der eigentliche QUIC-Server wird anschließend über den \texttt{ServerConnector} erstellt.
+Dabei werden unter anderem der Serverport, die unterstützten Protokollversionen, das Schlüsselmaterial sowie der Logger registriert.
+
+\begin{lstlisting}
+ServerConnector connector = ServerConnector.builder()
+        .withPort(7000)
+        .withSupportedVersions(supportedVersions)
+        .withKeyStore(keystore, KEY_ALIAS, KEYSTORE_PASSWORD.toCharArray())
+        .withConfiguration(config)
+        .withLogger(log)
+        .build();
+\end{lstlisting}
+
+Über \texttt{registerApplicationProtocol} wird schließlich das Anwendungsprotokoll \texttt{quic} mit der zuvor definierten \texttt{MyQuicFactory} verknüpft.
+
+\begin{lstlisting}
+connector.registerApplicationProtocol("quic", new MyQuicFactory(log));
+\end{lstlisting}
+
+Mit dem Aufruf von \texttt{connector.start()} wird der Server gestartet.
+
+\begin{lstlisting}
+connector.start();
+\end{lstlisting}

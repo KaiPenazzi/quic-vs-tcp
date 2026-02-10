@@ -2,29 +2,6 @@
 
 Die Klasse \texttt{MyQuicConnection} stellt die zentrale Verbindungskomponente des Servers dar. 
 Sie implementiert die Schnittstelle \texttt{ApplicationProtocolConnection} des Kwik-Frameworks und wird für jede eingehende QUIC-Verbindung instanziiert.
-
-Die Hauptaufgaben dieser Klasse sind:
-
-\begin{itemize}
-    \item Verwaltung des lokalen Verbindungszustands (\texttt{ConnectionState}) und Zugriff auf den globalen Zustand (\texttt{MyGlobalState}).
-    \item Akzeptieren von von Peers initiierten Streams über \texttt{acceptPeerInitiatedStream}.
-    \item Unterscheidung zwischen unidirektionalen und bidirektionalen Streams.
-    \item Verarbeitung von Nachrichten aus bidirektionalen Streams, inklusive Befehlen zur Zustandsabfrage oder -änderung:
-    \begin{itemize}
-        \item \texttt{get / set} für den lokalen Verbindungszustand
-        \item \texttt{gget / gset} für den globalen Zustand
-        \item Alle anderen Nachrichten werden einfach zurückgesendet (Echo)
-    \end{itemize}
-    \item Versand von Nachrichten über die bidirektionalen Streams.
-\end{itemize}
-
-Die Verarbeitung jedes Streams erfolgt in einem eigenen Thread, um parallele Kommunikation zu ermöglichen, was eine realistische Simulation einer Multi-Client-Umgebung erlaubt. 
-
-
-\subsection{MyQuicConnection}
-
-Die Klasse \texttt{MyQuicConnection} stellt die zentrale Verbindungskomponente des Servers dar. 
-Sie implementiert die Schnittstelle \texttt{ApplicationProtocolConnection} des Kwik-Frameworks und wird für jede eingehende QUIC-Verbindung instanziiert.
 Im Konstruktor wird ein \texttt{MyConnectionListener} gesetzt. Die \texttt{connected}-Methode des Listeners wird dabei allerdings nicht aufgerufen, da die Verbindung bereits vorher aufgebaut wurde.
 
 Die Hauptaufgaben dieser Klasse sind:
@@ -45,7 +22,7 @@ Die Hauptaufgaben dieser Klasse sind:
 Die Verarbeitung jedes Streams erfolgt in einem eigenen Thread, um parallele Kommunikation zu ermöglichen.
 
 
-\begin{verbatim}
+\begin{lstlisting}
 public class MyQuicConnection implements ApplicationProtocolConnection {
     private final QuicConnection quicConnection;
     private final Logger log;
@@ -139,5 +116,5 @@ public class MyQuicConnection implements ApplicationProtocolConnection {
 
     }
 }
-\end{verbatim}
+\end{lstlisting}
 
