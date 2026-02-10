@@ -8,7 +8,10 @@
 \lstset{
     basicstyle=\ttfamily\scriptsize,
     breaklines=true,
-    breakatwhitespace=true
+    breakatwhitespace=true,
+    inputencoding=utf8,
+    extendedchars=true,
+    literate={ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1 {Ä}{{\"A}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1 {ß}{{\ss}}1
 }
 
 \begin{document}
@@ -16,6 +19,6 @@
 \tableofcontents
 \newpage
 \input{sections/einleitung.tex}
-\input{sections/architektur.tex}
 \input{sections/server.tex}
+\input{sections/client.tex}
 \end{document}

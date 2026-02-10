@@ -24,8 +24,8 @@ openssl pkcs12 -export \
   -out keystore.p12 \
   -passout pass:keystorepass
 
-# Optional: Pruefe Inhalt des Keystores
-echo "Folgende Eintraege befinden sich im Keystore:"
+# Optional: Prüfe Inhalt des Keystores
+echo "Folgende Einträge befinden sich im Keystore:"
 keytool -list -keystore keystore.p12 -storetype PKCS12 -storepass keystorepass
 \end{lstlisting}
 
