@@ -1,0 +1,28 @@
+\subsection{Commands}
+
+Die Client-Anwendung nutzt Picocli, um die Benutzereingaben als Subcommands bereitzustellen. Jeder Command implementiert entweder das \texttt{Callable}- oder das \texttt{Runnable}-Interface und kann eigene Parameter definieren, die Picocli automatisch aus den eingegebenen Strings parsed.
+
+Ein Beispiel hierfür ist der \texttt{OpenStream}-Command.
+Dieser erwartet als Parameter die \texttt{connection\_id}, die angibt, über welche bestehende QUIC-Verbindung ein neuer Stream geöffnet werden soll.
+Innerhalb des Commands greift die Implementierung auf \texttt{MyConnectionHandler} zu um einen neuen Stream zu eröffnen.
+Auf diese Weise abstrahiert jeder Command die direkte Interaktion mit den QUIC-Verbindungen und ermöglicht eine übersichtliche, modulare Steuerung des Clients.
+
+
+\begin{lstlisting}
+@Command(name = "open_stream", description = "open a stream")
+public class OpenStream implements Callable<Integer> {
+    private final MyConnectionHandler handler;
+
+    @Parameters(index = "0", description = "Connection ID")
+    public int connection_id;
+
+    public OpenStream(MyConnectionHandler handler) {
+        this.handler = handler;
+    }
+
+    @Override
+    public Integer call() throws IOException {
+        return this.handler.getConnection(this.connection_id).open_stream();
+    }
+}
+\end{lstlisting}

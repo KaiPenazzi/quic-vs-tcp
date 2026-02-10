@@ -1,22 +1,14 @@
-package org.example;
+\subsection{MyConnection}
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
+Die Klasse \texttt{MyConnection} kapselt die QUIC-Client-Funktionalität. 
+Sie ermöglicht den Aufbau einer Verbindung zu einem QUIC-Server, das Öffnen von Streams sowie das Senden und Empfangen von Nachrichten. 
+Dabei werden bidirektionale und unidirektionale Streams unterstützt, und es können mehrere parallele Streams gleichzeitig verwaltet werden.
 
-import tech.kwik.core.QuicClientConnection;
-import tech.kwik.core.QuicStream;
-
+\begin{lstlisting}
 public class MyConnection {
 
     private final URI uri;
     private QuicClientConnection connection;
-
     private List<QuicStream> streams;
 
     public MyConnection(String url) {
@@ -105,3 +97,4 @@ public class MyConnection {
         return this.connection.getStats().toString();
     }
 }
+\end{lstlisting}

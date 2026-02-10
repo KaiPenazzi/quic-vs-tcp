@@ -1,0 +1,34 @@
+\subsection{MyConnectionHandler}
+
+Die Klasse \texttt{MyConnectionHandler} verwaltet mehrere QUIC-Clientverbindungen. 
+Sie abstrahiert die Verwaltung mehrerer \texttt{MyConnection}-Instanzen und erlaubt das gleichzeitige Erstellen, Verwenden und Schließen mehrerer Verbindungen.
+
+\begin{lstlisting}
+public class MyConnectionHandler {
+    private List<MyConnection> clients;
+
+    public MyConnectionHandler() {
+        this.clients = new ArrayList<MyConnection>();
+    }
+
+    public void createConnection(String url) throws Exception {
+        MyConnection client = new MyConnection(url);
+        client.connect();
+        this.clients.add(client);
+    }
+
+    public String sendResponse(int connection_id, String msg) {
+        return this.clients.get(connection_id).sendResponse(msg);
+    }
+
+    public MyConnection getConnection(int connection_id) {
+        return this.clients.get(connection_id);
+    }
+
+    public void closeAll() {
+        for (MyConnection client : clients) {
+            client.close();
+        }
+    }
+}
+\end{lstlisting}

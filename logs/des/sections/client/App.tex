@@ -1,0 +1,58 @@
+\subsection{App Client}
+
+Die Klasse \texttt{App} dient als Kommandozeilen-Interface für den QUIC-Client-Demonstrator. 
+Sie nutzt \texttt{picocli} zur Verarbeitung von Subcommands.
+
+Die Verwaltung der QUIC-Verbindungen erfolgt über \texttt{MyConnectionHandler}.
+Benutzereingaben werden in einer Endlosschleife eingelesen und anschließend an die registrierten Subcommands weitergeleitet. 
+Die Zerlegung des Eingabestrings in einzelne Argumente erfolgt über die Methode \texttt{splitArgs}, die von dem KI-Modell Gemini generiert wurde und dafür sorgt, dass auch Argumente in Anführungszeichen korrekt als ein String behandelt werden.
+
+\begin{lstlisting}
+@Command(name = "", subcommands = {})
+public class App {
+    public static void main(String[] args) throws Exception {
+        MyConnectionHandler handler = new MyConnectionHandler();
+
+        Scanner scanner = new Scanner(System.in);
+
+        CommandLine cmd = new CommandLine(new App());
+        cmd.addSubcommand("connect", new Connect(handler));
+        cmd.addSubcommand("disconnect", new Disconnect(handler));
+        cmd.addSubcommand("openStream", new OpenStream(handler));
+        cmd.addSubcommand("closeStream", new CloseStream(handler));
+        cmd.addSubcommand("sendOver", new SendOver(handler));
+        cmd.addSubcommand("getState", new GetState(handler));
+        cmd.addSubcommand("setState", new SetState(handler));
+        cmd.addSubcommand("stats", new Stats(handler));
+        cmd.addSubcommand("setGState", new SetGlobalState(handler));
+        cmd.addSubcommand("getGState", new GetGlobalState(handler));
+
+        while (true) {
+            System.out.print("> ");
+            String input = scanner.nextLine();
+
+            if (input.equals("exit"))
+                break;
+
+            String[] parsedArgs = splitArgs(input);
+            cmd.execute(parsedArgs);
+        }
+
+        handler.closeAll();
+    }
+
+    // von Gemini generierte Methode zum Parsen von Anführungszeichen
+    public static String[] splitArgs(String string) {
+        List<String> matchList = new ArrayList<String>();
+        Pattern regex = Pattern.compile("[^\\s\"]+|\"([^\"]*)\"");
+        Matcher regexMatcher = regex.matcher(string);
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null)
+                matchList.add(regexMatcher.group(1));
+            else
+                matchList.add(regexMatcher.group());
+        }
+        return matchList.toArray(new String[0]);
+    }
+}
+\end{lstlisting}
