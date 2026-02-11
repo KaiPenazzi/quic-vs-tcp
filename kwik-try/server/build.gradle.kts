@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("io.github.goooler.shadow") version "8.1.8"
 }
 
 repositories {
@@ -41,4 +42,13 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+tasks.shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes(
+            "Main-Class" to "org.example.App"
+        )
+    }
 }
