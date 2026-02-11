@@ -1,0 +1,18 @@
+\subsection{Build und Ausführung}
+Der Server kann problemlos direkt über Gradle mit dem Task \texttt{run} gestartet werden:
+
+\begin{lstlisting}
+./gradlew server:run
+\end{lstlisting}
+
+Alternativ kann der Server als ausführbare Fat JAR gebaut werden. Hierzu wird das Gradle-Plugin \texttt{com.github.gooogler.shadow} verwendet, das sämtliche Abhängigkeiten in eine einzelne ausführbare JAR integriert.
+
+\begin{lstlisting}
+./gradlew shadowJar
+\end{lstlisting}
+
+Anschließend kann der Server unabhängig von Gradle direkt über die Java-Laufzeitumgebung gestartet werden:
+
+\begin{lstlisting}
+java -jar server/build/libs/server-all.jar
+\end{lstlisting}

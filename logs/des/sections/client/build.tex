@@ -2,15 +2,10 @@
 
 Da der Client als Kommandozeilenwerkzeug implementiert ist und kontinuierlich Benutzereingaben über \texttt{System.in} verarbeitet, kommt es zu Fehlern bei der ausführung mit \texttt{gradlew client:run}.
 
-Aus diesem Grund wird der Client als ausführbare JAR-Datei bereitgestellt.
-Hierfür wird das Gradle-Plugin \texttt{com.github.gooogler.shadow} verwendet, das eine "Fat JAR" erzeugt.
-Dabei werden sämtliche Abhängigkeiten, in eine einzelne ausführbare Datei integriert.
-
-Die JAR-Datei kann direkt über die Java-Laufzeitumgebung gestartet werden.
+Aus diesem Grund muss der Client als ausführbare JAR-Datei gestartet werden.
+Hierfür wird ebenfalls das Gradle-Plugin \texttt{com.github.gooogler.shadow} verwendet.
 
 \begin{lstlisting}
-#!/bin/bash
-
 ./gradlew client:shadowJar
 java -jar client/build/libs/client-all.jar
 \end{lstlisting}
