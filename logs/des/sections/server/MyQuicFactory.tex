@@ -1,8 +1,8 @@
 \subsection{QUIC-Factory}
 
-Die Klasse \texttt{MyQuicFactory} implementiert das Interface \texttt{ApplicationProtocolConnectionFactory} und ist für die Erzeugung neuer Anwendungsprotokoll-Verbindungen zuständig.
+Die Klasse \texttt{MyQuicFactory} implementiert das Interface \texttt{ApplicationProtocolConnectionFactory} und ist für die Erzeugung neuer Verbindungen zuständig.
 Sie wird vom Kwik-Framework verwendet, sobald eine neue QUIC-Verbindung akzeptiert wird.
-\\
+
 Innerhalb der Factory wird ein einzelnes Objekt vom Typ \texttt{MyGlobalState} erzeugt und gespeichert.
 Dieses globale Zustandsobjekt wird bei jeder neu erstellten \texttt{MyQuicConnection} an den Konstruktor übergeben, sodass alle Verbindungen denselben globalen Zustand teilen.
 

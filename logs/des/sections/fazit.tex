@@ -1,0 +1,8 @@
+\section{Fazit}
+
+Kwik abstrahiert die Logik des QUIC-Protokolls weitgehend und stellt der Anwendung eine höherwertige, stream-orientierte API zur Verfügung.
+Dadurch kann sich die Anwendungsentwicklung auf logische Datenströme konzentrieren, ohne sich mit Details wie Paketnummern, Retransmissions oder Congestion Control befassen zu müssen.
+
+Diese starke Abstraktion vereinfacht die Nutzung erheblich, führt jedoch auch dazu, dass transportnahe Ereignisse – etwa Benachrichtigungen über Paketverluste oder interne Retransmissions – nicht über die öffentliche API zugänglich sind.
+Der \texttt{ConnectionListener} bietet lediglich grundlegende Verbindungsereignisse wie Verbindungsaufbau und -abbau.
+Für Analyse- oder Forschungszwecke könnte eine erweiterte Ereignisschnittstelle sinnvoll sein, die tiefere Einblicke in das Verhalten der Transportebene erlaubt.
