@@ -35,7 +35,7 @@ public final class App {
                 .applicationProtocols("quic").build();
         EventLoopGroup group = new MultiThreadIoEventLoopGroup(1, NioIoHandler.newFactory());
         ChannelHandler codec = new QuicServerCodecBuilder().sslContext(context)
-                .maxIdleTimeout(5000, TimeUnit.MILLISECONDS)
+                .maxIdleTimeout(5000, TimeUnit.SECONDS)
                 .initialMaxData(10000000)
                 .initialMaxStreamDataBidirectionalLocal(1000000)
                 .initialMaxStreamDataBidirectionalRemote(1000000)
