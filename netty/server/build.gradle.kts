@@ -20,6 +20,8 @@ dependencies {
     testImplementation(libs.junit.jupiter)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("io.netty:netty-codec-classes-quic:4.2.10.Final")
+    implementation("io.netty:netty-codec-native-quic:4.2.10.Final:linux-x86_64")
 
     // This dependency is used by the application.
     implementation(libs.guava)

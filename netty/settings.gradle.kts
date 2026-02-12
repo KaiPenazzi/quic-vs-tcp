@@ -11,4 +11,5 @@ plugins {
 }
 
 rootProject.name = "netty"
-include("client", "server")
+include("client")
+include("server")
